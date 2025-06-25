@@ -21,3 +21,5 @@ My skillset broken down in layman's terms.
 | **JavaScript**                            | The programming language that makes websites interactive — like buttons that work or forms that send data. |
 | **PowerBI M Query**                       | A language used in Power BI to pull, clean, and shape data before making dashboards — like preparing ingredients before cooking a great meal. |
 | **Windows Client**                        | The everyday Windows computers people use at work or home (like Windows 10/11). Managing these means making sure they’re secure, up to date, and working properly for users. |
+| **Power Automate Desktop**                | A tool that lets you automate manual tasks on your computer — like clicking buttons, copying files, or reading emails — without writing complex code. It’s like teaching your PC to follow instructions for you. |
+
