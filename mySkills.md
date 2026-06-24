@@ -1,4 +1,3 @@
-# My Resume
 My skillset broken down in layman's terms.
 
 | **Specialty**                             | **Description** |
@@ -10,16 +9,14 @@ My skillset broken down in layman's terms.
 | **Microsoft Intune**                      | A cloud-based system that manages and secures your devices (like laptops or phones), ensuring they follow company rules wherever they are. |
 | **Privileged Access Workstation (PAW)**   | A highly secure computer used by IT admins to protect sensitive accounts and systems from cyber threats. Think of it as a digital panic room. |
 | **Microsoft Defender for Endpoint & Identity** | A security guard for your computers and user accounts — detects, alerts, and stops bad behavior or attackers. |
-| **Microsoft Sentinel**                    | A cloud-based security control room that watches over everything, gathers alerts, and helps respond to threats in real time. |
-| **Multi-Factor Authentication (MFA)**     | Adds extra security when logging in — like needing both a password and a one-time text code. Makes it harder for hackers to break in. |
-| **Identity & Management**                 | Controls who can access what — like a digital bouncer checking ID before letting people into the right systems. |
 | **Azure Virtual Desktop (AVD)**           | Lets you access a full Windows desktop from anywhere — even on a tablet or Mac — hosted securely in Microsoft’s cloud. |
 | **PowerShell**                            | A command-line tool and scripting language used to automate tasks across Windows and Microsoft cloud services. Like a supercharged remote control. |
 | **GitHub Actions & Workflow**             | Automates software development steps like building, testing, or deploying code when changes happen. Think of it as a smart conveyor belt. |
 | **Logic Apps**                            | Drag-and-drop automation for workflows between services — like “if an email arrives, save the attachment to OneDrive.” |
 | **Function Apps & Static Web Apps**       | Function Apps run small pieces of code in the cloud only when needed, while Static Web Apps host fast-loading websites. Together they power efficient and scalable apps. |
-| **JavaScript**                            | The programming language that makes websites interactive — like buttons that work or forms that send data. |
 | **PowerBI M Query**                       | A language used in Power BI to pull, clean, and shape data before making dashboards — like preparing ingredients before cooking a great meal. |
 | **Windows Client**                        | The everyday Windows computers people use at work or home (like Windows 10/11). Managing these means making sure they’re secure, up to date, and working properly for users. |
-| **Power Automate Desktop**                | A tool that lets you automate manual tasks on your computer — like clicking buttons, copying files, or reading emails — without writing complex code. It’s like teaching your PC to follow instructions for you. |
-
+| **Power Automate Cloud & Desktop**        | |
+| **Azure AI Document Intellegence**        | |
+| **Azure OpenAI Analyst**                  | |
+| **Azure Data Factory**                  | |
