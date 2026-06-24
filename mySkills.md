@@ -2,21 +2,21 @@ My skillset broken down in layman's terms.
 
 | **Specialty**                             | **Description** |
 |-------------------------------------------|---------------------------------|
-| **Azure Automation**                      | Automates tasks in the cloud so you don’t have to manually manage systems or software updates. Like a smart assistant that runs scheduled jobs for you. |
-| **Graph API**                             | A bridge that lets you talk to Microsoft services (like Intune or Entra ID) using code. Think of it as ordering from a digital menu of Microsoft services. |
-| **KQL (Kusto Query Language)**            | A special search language used to dig through large logs and find specific issues or patterns, like Googling errors across millions of records. |
-| **Log Analytics**                         | Collects and analyzes log data from different systems to show what’s working and what’s not — kind of like a fitness tracker for your IT environment. |
-| **Microsoft Intune**                      | A cloud-based system that manages and secures your devices (like laptops or phones), ensuring they follow company rules wherever they are. |
-| **Privileged Access Workstation (PAW)**   | A highly secure computer used by IT admins to protect sensitive accounts and systems from cyber threats. Think of it as a digital panic room. |
-| **Microsoft Defender for Endpoint & Identity** | A security guard for your computers and user accounts — detects, alerts, and stops bad behavior or attackers. |
-| **Azure Virtual Desktop (AVD)**           | Lets you access a full Windows desktop from anywhere — even on a tablet or Mac — hosted securely in Microsoft’s cloud. |
-| **PowerShell**                            | A command-line tool and scripting language used to automate tasks across Windows and Microsoft cloud services. Like a supercharged remote control. |
-| **GitHub Actions & Workflow**             | Automates software development steps like building, testing, or deploying code when changes happen. Think of it as a smart conveyor belt. |
-| **Logic Apps**                            | Drag-and-drop automation for workflows between services — like “if an email arrives, save the attachment to OneDrive.” |
-| **Function Apps & Static Web Apps**       | Function Apps run small pieces of code in the cloud only when needed, while Static Web Apps host fast-loading websites. Together they power efficient and scalable apps. |
-| **PowerBI M Query**                       | A language used in Power BI to pull, clean, and shape data before making dashboards — like preparing ingredients before cooking a great meal. |
-| **Windows Client**                        | The everyday Windows computers people use at work or home (like Windows 10/11). Managing these means making sure they’re secure, up to date, and working properly for users. |
-| **Power Automate Cloud & Desktop**        | |
-| **Azure AI Document Intellegence**        | |
-| **Azure OpenAI Analyst**                  | |
-| **Azure Data Factory**                  | |
+| **Azure Automation**                      | The cloud’s caffeine-free intern that never sleeps, never complains, and runs your boring chores at 3 AM so you don’t have to roll out of bed for a software update. |
+| **Graph API**                             | A walkie-talkie for chatting with Microsoft services. You whisper some code into it and Intune or Entra ID politely hand over whatever you asked for — no awkward small talk required. |
+| **KQL (Kusto Query Language)**            | Detective mode for your logs. Point it at millions of records and it sniffs out the one rogue error hiding in the corner, magnifying glass and trench coat included. |
+| **Log Analytics**                         | A nosy fitness tracker for your IT environment — counts every step, every wheeze, and every “why is this thing on fire?” so you know exactly what skipped leg day. |
+| **Microsoft Intune**                      | A strict-but-fair babysitter for your laptops and phones, making sure they eat their security veggies and follow the rules even when they wander off to a coffee shop. |
+| **Privileged Access Workstation (PAW)**   | A digital panic room with a velvet rope. Only the VIP admin accounts get in, and hackers are left outside in the rain banging on the door. |
+| **Microsoft Defender for Endpoint & Identity** | A bouncer for your computers and accounts — spots troublemakers, yells “you’re not on the list,” and tosses attackers out before they reach the dance floor. |
+| **Azure Virtual Desktop (AVD)**           | Your whole Windows desktop teleported into the cloud, so you can pretend to work from a beach, a tablet, or even — gasp — a Mac. |
+| **PowerShell**                            | A supercharged remote control for Windows and the cloud. One wrong button and you’re a wizard; one *really* wrong button and you’re explaining things to your boss. |
+| **GitHub Actions & Workflow**             | A robotic conveyor belt for code that builds, tests, and ships your work automatically — like a tiny factory of elves who actually show up on time. |
+| **Logic Apps**                            | Connect-the-dots automation for grown-ups: “if an email arrives, save the attachment to OneDrive,” all without writing a single sweaty line of code. |
+| **Function Apps & Static Web Apps**       | Function Apps are bits of code that only wake up when poked (lazy but efficient), while Static Web Apps serve websites faster than you can say “please stop loading.” |
+| **PowerBI M Query**                       | The sous-chef of dashboards — chops, cleans, and seasons your messy data before plating it up into reports pretty enough to frame. |
+| **Windows Client**                        | The trusty everyday Windows machines (10/11) that people both love and yell at. Keeping them secure, patched, and happy so users blame the printer instead. |
+| **Power Automate Cloud & Desktop**        | A clicky little robot army that does your repetitive busywork for you — in the cloud or right on your desktop — so your mouse can finally retire and take up gardening. |
+| **Azure AI Document Intelligence**        | A speed-reader with a photographic memory that scans your invoices, forms, and receipts, yanks out the important bits, and never once asks for a coffee break. |
+| **Azure OpenAI Analyst**                  | Your overachieving data buddy that reads everything, summarizes the chaos, and answers your questions in plain English — basically a know-it-all friend, minus the smugness. |
+| **Azure Data Factory**                    | The cloud’s moving company for data: packs it up, hauls it across systems, and tidies it into the right shape — no cardboard boxes or bribing friends with pizza required. |
