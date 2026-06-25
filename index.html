@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Skillset — In Layman's Terms</title>
+<meta name="description" content="A plain-English breakdown of my Microsoft cloud, automation, and security skillset.">
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#1b2430; --muted:#5b6b7d;
+    --brand:#0b5cab; --brand-2:#00a4ef; --line:#e3e9f0; --chip:#eef4fb;
+    --shadow:0 6px 24px rgba(16,42,77,.08);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0e141b; --card:#161f2b; --ink:#e8eef5; --muted:#9fb0c2;
+      --brand:#4aa3ff; --brand-2:#00c2ff; --line:#243140; --chip:#1e2a38;
+      --shadow:0 6px 24px rgba(0,0,0,.4);
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6;
+  }
+  header.hero{
+    background:linear-gradient(135deg,var(--brand),var(--brand-2));
+    color:#fff; padding:3.2rem 1.25rem 2.6rem; text-align:center;
+  }
+  header.hero h1{margin:0 0 .4rem; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:700;}
+  header.hero p{margin:0; font-size:clamp(1rem,2.2vw,1.25rem); opacity:.95;}
+  .wrap{max-width:1200px; margin:0 auto; padding:1.5rem 1.25rem 3rem;}
+  .toolbar{
+    display:flex; gap:.75rem; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; margin:-2.4rem auto 1.6rem; max-width:1200px; padding:0 1.25rem;
+  }
+  .search{
+    flex:1 1 280px; display:flex; align-items:center; gap:.6rem;
+    background:var(--card); border:1px solid var(--line); border-radius:999px;
+    padding:.7rem 1.1rem; box-shadow:var(--shadow);
+  }
+  .search input{
+    border:0; outline:0; background:transparent; color:var(--ink);
+    font-size:1rem; width:100%;
+  }
+  .search svg{flex:0 0 auto; opacity:.6}
+  .count{color:#fff; font-weight:600; font-size:.95rem; white-space:nowrap;}
+  .grid{
+    display:grid; gap:1.1rem;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  }
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:1.25rem 1.3rem; box-shadow:var(--shadow);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover{transform:translateY(-4px); box-shadow:0 12px 30px rgba(16,42,77,.16);}
+  .card h2{
+    margin:0 0 .55rem; font-size:1.12rem; display:flex; align-items:center; gap:.6rem;
+  }
+  .card h2 .ico{font-size:1.35rem; line-height:1}
+  .card p{margin:0; color:var(--muted); font-size:.97rem;}
+  .badge{
+    display:inline-block; margin-top:.85rem; font-size:.72rem; font-weight:600;
+    letter-spacing:.03em; text-transform:uppercase; color:var(--brand);
+    background:var(--chip); border:1px solid var(--line);
+    padding:.2rem .6rem; border-radius:999px;
+  }
+  .empty{text-align:center; color:var(--muted); padding:2rem; display:none;}
+  footer{
+    text-align:center; color:var(--muted); font-size:.85rem;
+    padding:2rem 1.25rem 3rem; border-top:1px solid var(--line); margin-top:1rem;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>My Skillset</h1>
+  <p>The whole toolbox — broken down in plain, layman's terms.</p>
+</header>
+
+<div class="toolbar">
+  <label class="search">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="q" type="search" placeholder="Search a skill… (e.g. Intune, KQL, PowerShell)" aria-label="Search skills">
+  </label>
+  <span class="count" id="count"></span>
+</div>
+
+<main class="wrap">
+  <section class="grid" id="grid">
+
+    <article class="card"><h2><span class="ico">🤖</span>Azure Automation</h2><p>The cloud's caffeine-free intern that never sleeps, never complains, and runs your boring chores at 3 AM so you don't have to roll out of bed for a software update.</p><span class="badge">Cloud Ops</span></article>
+
+    <article class="card"><h2><span class="ico">📡</span>Graph API</h2><p>A walkie-talkie for chatting with Microsoft services. You whisper some code into it and Intune or Entra ID politely hand over whatever you asked for — no awkward small talk required.</p><span class="badge">Integration</span></article>
+
+    <article class="card"><h2><span class="ico">🕵️</span>KQL (Kusto Query Language)</h2><p>Detective mode for your logs. Point it at millions of records and it sniffs out the one rogue error hiding in the corner, magnifying glass and trench coat included.</p><span class="badge">Data</span></article>
+
+    <article class="card"><h2><span class="ico">📊</span>Log Analytics</h2><p>A nosy fitness tracker for your IT environment — counts every step, every wheeze, and every "why is this thing on fire?" so you know exactly what skipped leg day.</p><span class="badge">Monitoring</span></article>
+
+    <article class="card"><h2><span class="ico">📱</span>Microsoft Intune</h2><p>A strict-but-fair babysitter for your laptops and phones, making sure they eat their security veggies and follow the rules even when they wander off to a coffee shop.</p><span class="badge">Endpoint</span></article>
+
+    <article class="card"><h2><span class="ico">🚪</span>Privileged Access Workstation (PAW)</h2><p>A digital panic room with a velvet rope. Only the VIP admin accounts get in, and hackers are left outside in the rain banging on the door.</p><span class="badge">Security</span></article>
+
+    <article class="card"><h2><span class="ico">🛡️</span>Microsoft Defender for Endpoint &amp; Identity</h2><p>A bouncer for your computers and accounts — spots troublemakers, yells "you're not on the list," and tosses attackers out before they reach the dance floor.</p><span class="badge">Security</span></article>
+
+    <article class="card"><h2><span class="ico">🏖️</span>Azure Virtual Desktop (AVD)</h2><p>Your whole Windows desktop teleported into the cloud, so you can pretend to work from a beach, a tablet, or even — gasp — a Mac.</p><span class="badge">Cloud</span></article>
+
+    <article class="card"><h2><span class="ico">⚡</span>PowerShell</h2><p>A supercharged remote control for Windows and the cloud. One wrong button and you're a wizard; one <em>really</em> wrong button and you're explaining things to your boss.</p><span class="badge">Automation</span></article>
+
+    <article class="card"><h2><span class="ico">🏭</span>GitHub Actions &amp; Workflow</h2><p>A robotic conveyor belt for code that builds, tests, and ships your work automatically — like a tiny factory of elves who actually show up on time.</p><span class="badge">DevOps</span></article>
+
+    <article class="card"><h2><span class="ico">🔗</span>Logic Apps</h2><p>Connect-the-dots automation for grown-ups: "if an email arrives, save the attachment to OneDrive," all without writing a single sweaty line of code.</p><span class="badge">Integration</span></article>
+
+    <article class="card"><h2><span class="ico">⚙️</span>Function Apps &amp; Static Web Apps</h2><p>Function Apps are bits of code that only wake up when poked (lazy but efficient), while Static Web Apps serve websites faster than you can say "please stop loading."</p><span class="badge">Serverless</span></article>
+
+    <article class="card"><h2><span class="ico">👨‍🍳</span>PowerBI M Query</h2><p>The sous-chef of dashboards — chops, cleans, and seasons your messy data before plating it up into reports pretty enough to frame.</p><span class="badge">Data</span></article>
+
+    <article class="card"><h2><span class="ico">💻</span>Windows Client</h2><p>The trusty everyday Windows machines (10/11) that people both love and yell at. Keeping them secure, patched, and happy so users blame the printer instead.</p><span class="badge">Endpoint</span></article>
+
+    <article class="card"><h2><span class="ico">🦾</span>Power Automate Cloud &amp; Desktop</h2><p>A clicky little robot army that does your repetitive busywork for you — in the cloud or right on your desktop — so your mouse can finally retire and take up gardening.</p><span class="badge">Automation</span></article>
+
+    <article class="card"><h2><span class="ico">📄</span>Azure AI Document Intelligence</h2><p>A speed-reader with a photographic memory that scans your invoices, forms, and receipts, yanks out the important bits, and never once asks for a coffee break.</p><span class="badge">AI</span></article>
+
+    <article class="card"><h2><span class="ico">🧠</span>Azure OpenAI Analyst</h2><p>Your overachieving data buddy that reads everything, summarizes the chaos, and answers your questions in plain English — basically a know-it-all friend, minus the smugness.</p><span class="badge">AI</span></article>
+
+    <article class="card"><h2><span class="ico">🚚</span>Azure Data Factory</h2><p>The cloud's moving company for data: packs it up, hauls it across systems, and tidies it into the right shape — no cardboard boxes or bribing friends with pizza required.</p><span class="badge">Data</span></article>
+
+  </section>
+  <p class="empty" id="empty">No skills match that search. 🤷</p>
+</main>
+
+<footer>
+  Built with ☕ and a healthy fear of 3 AM pages · <span id="year"></span>
+</footer>
+
+<script>
+  const cards = [...document.querySelectorAll('.card')];
+  const q = document.getElementById('q');
+  const count = document.getElementById('count');
+  const empty = document.getElementById('empty');
+  const render = () => {
+    const term = q.value.trim().toLowerCase();
+    let shown = 0;
+    cards.forEach(c => {
+      const hit = c.textContent.toLowerCase().includes(term);
+      c.style.display = hit ? '' : 'none';
+      if (hit) shown++;
+    });
+    count.textContent = shown + ' / ' + cards.length + ' skills';
+    empty.style.display = shown ? 'none' : 'block';
+  };
+  q.addEventListener('input', render);
+  document.getElementById('year').textContent = new Date().getFullYear();
+  render();
+</script>
+
+</body>
+</html>
