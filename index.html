@@ -214,3 +214,99 @@ footer b{color:var(--amber)}
     AI
     ABOUT
     CONTACT
+  
+
+  CODE: DEFENDER
+  
+
+  
+    PLAYER 1: Press Start
+    LEVEL: PRINCIPAL ENGINEER
+    STATUS: ONLINE
+  
+
+  ★ ENDPOINT · CLOUD · AUTOMATION · AI ★
+  Microsoft& Automation
+  My toolbox in layman's terms — Intune, Entra, Azure, PowerShell, Copilot agents and the automation that keeps a 500K-device estate patched, secure and quiet at 3 AM.
+
+  
+    
+      >
+      
+    
+    
+  
+
+  
+    🤖Azure AutomationThe cloud's caffeine-free intern. It never sleeps, never complains, and runs the boring chores at 3 AM so you don't have to roll out of bed for a software update.Cloud Ops
+    📡Graph APIThe walkie-talkie for chatting with Microsoft services. Whisper the right code into it and Intune or Entra ID politely hand over whatever you asked for — no awkward small talk required.Integration
+    🔍KQL (Kusto Query Language)Detective mode for logs. Point it at millions of records and it sniffs out the one rogue error hiding in the corner. Magnifying glass and trench coat included.Data
+    📈Log AnalyticsThe nosy fitness tracker for your IT environment. It counts every step, every wheeze, and every "why is that thing on fire?" — and it knows you skipped leg day.Monitoring
+    📱Microsoft IntuneThe strict-but-fair babysitter for laptops and phones. It makes them eat their security veggies and follow the rules, even when they wander off to a coffee shop.Endpoint
+    🚪Privileged Access Workstation (PAW)A digital panic room with a velvet rope. Only VIP admin accounts get in — hackers are left outside in the rain, banging on the door.Security
+    🛡️Microsoft Defender for Endpoint & IdentityThe bouncer for your computers and accounts. It spots the troublemakers, yells "you're not on the list", and tosses attackers out before they reach the dance floor.Security
+    🖥️Azure Virtual Desktop (AVD)Your Windows desktop, teleported into the cloud. Pretend to work from a beach, a tablet, or — gasp — a Mac.Cloud
+    ⚡PowerShellA supercharged remote control for Windows and the cloud. One right button and you're a wizard; one wrong button and you're explaining things to your boss.Automation
+    🏭GitHub Actions & WorkflowA robotic conveyor belt for code. It builds, tests and ships your work automatically, like a tiny factory of elves who actually show up on time.DevOps
+    🔗Logic AppsConnect-the-dots automation for grown-ups: if an email arrives, save the attachment to OneDrive — without writing a single sweaty line of code.Integration
+    ☁️Function Apps & Static Web AppsFunction Apps are bits of code that only wake up when poked (lazy but efficient). Static Web Apps serve websites faster than you can say "stop loading".Serverless
+    📊Power BI & M QueryThe sous-chef of dashboards. It chops, cleans and seasons messy data before plating it up into reports you'd happily frame.Data
+    🪟Windows ClientThe trusty everyday Windows machines (10/11) people love and yell at. Keeping them secure, patched and happy so users blame the printer instead.Endpoint
+    🖱️Power Automate Cloud & DesktopA clicky robot army that does the repetitive busywork for you, in the cloud or on your desktop. Your mouse can retire and take up gardening.Automation
+    📄Azure AI Document IntelligenceA speed-reader with a photographic memory. It scans invoices, forms and receipts, yanks out the important bits, and never asks for a coffee break.AI
+    🧠Azure OpenAI AnalystThe overachieving data buddy. It reads everything, summarises the chaos, and answers questions in plain English — the know-it-all friend, minus the smugness.AI
+    🧑‍🚀Copilot AgentsCustom-built digital colleagues who actually read the handbook. Point one at your onboarding docs, policies or ticket queue and it answers the same question for the 400th time — cheerfully, at 2 AM, without a single passive-aggressive sigh.AI
+    🚚Azure Data FactoryThe cloud's moving company for data. It packs it up, hauls it across systems and tidies it into the right shape — no cardboard boxes or bribing friends with pizza required.Data
+  
+  ▮ NO HUMANOIDS FOUND ▮<ms-copilot-line-break>TRY ANOTHER SCAN
+
+
+
+
+  INSERT COIN · BUILT WITH A HEALTHY FEAR OF 3 AM PAGES<ms-copilot-line-break>
+  ©  MATT BALZAN — WILLIAMS DEFENDER TRIBUTE BUILD
+
+
+
+(function(){
+  'use strict';
+
+  /* ================= SEARCH ================= */
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var q = document.getElementById('q');
+  var countEl = document.getElementById('count');
+  var empty = document.getElementById('empty');
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function render(){
+    var t = q.value.trim().toLowerCase(), shown = 0;
+    cards.forEach(function(c){
+      var hit = c.textContent.toLowerCase().indexOf(t) !== -1;
+      c.style.display = hit ? '' : 'none';
+      if(hit) shown++;
+    });
+    countEl.textContent = pad(shown)+' / '+pad(cards.length)+' SKILLS';
+    empty.style.display = shown ? 'none' : 'block';
+  }
+  q.addEventListener('input', render);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ q.value=''; render(); q.blur(); }
+  });
+  document.getElementById('year').textContent = new Date().getFullYear();
+  render();
+
+  /* ================= DEFENDER BATTLE ================= */
+  var cv = document.getElementById('battle');
+  var ctx = cv.getContext('2d');
+  var W = 0, H = 0, S = 3;               // S = pixel scale
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* --- Sprites: X = draw pixel, each row is a string --- */
+  var SPR = {
+    ship: ['..XXX...','XXXXXXX.','..XXXXXX','XXXXXXX.','..XXX...'],
+    lander:['..XX..','.XXXX.','XXXXXX','.X..X.','X....X','X....X'],
+    mutant:['X.XX.X','.XXXX.','XXXXXX','X.XX.X','.X..X.'],
+    human: ['.XX.','.XX.','XXXX','.XX.','X..X']
+  };
+
+  function blit(spr, x, y, col
