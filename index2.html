@@ -136,6 +136,8 @@ body:has(#theme-switch:checked) .title span{filter:brightness(.62) saturate(1.3)
 .posts li{border:2px solid var(--pane-edge);padding:.9rem 1rem 1rem}
 .posts li:hover{border-color:var(--accent)}
 .posts h3{margin:0;font-family:var(--pixel);font-size:.55rem;line-height:1.95;color:var(--ink-bright)}
+.posts h3 a{color:inherit;text-decoration:none}
+.posts h3 a:hover,.posts h3 a:focus-visible{color:var(--accent);outline:none}
 .posts p{margin:.7rem 0 .85rem;font-size:1rem;opacity:.86}
 .posts .meta{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;font-family:var(--pixel);font-size:.4rem;letter-spacing:.1em;color:var(--dim)}
 .posts .hash{color:var(--accent-3);border:1px solid var(--accent-3);padding:.3rem .45rem}
@@ -299,33 +301,34 @@ body{font-size:16px;--hdr:118px;--ftr:120px}
 <div class="bar"><h2>LATEST POSTS</h2><small>HIGH SCORES / NEW TRANSMISSIONS</small></div>
 <div class="body">
 <ul class="posts">
+<!-- TEMPLATE: point each href at that post's own copy of post-template.html -->
 <li>
-<h3>AZURE ARC WITH PRIVATE LINK: SECURE HYBRID ONBOARDING</h3>
+<h3><a href="post-template.html">AZURE ARC WITH PRIVATE LINK: SECURE HYBRID ONBOARDING</a></h3>
 <p>Network and DNS considerations for onboarding Arc-enabled servers through Azure Private Link.</p>
 <p class="meta"><span class="hash">#AZURE-ARC</span><span>LVL C42 &middot; TIME 01:29</span><span class="go">PLAY &#8594;</span></p>
 </li>
 <li>
-<h3>CREATING A PRIVATE VIP URL FOR SSRS</h3>
+<h3><a href="post-template.html">CREATING A PRIVATE VIP URL FOR SSRS</a></h3>
 <p>Publish SQL Server Reporting Services internally with resilient health checks, DNS and TLS.</p>
 <p class="meta"><span class="hash">#SSRS</span><span>LVL 755 &middot; TIME 01:15</span><span class="go">PLAY &#8594;</span></p>
 </li>
 <li>
-<h3>DEPLOYING AZURE MONITOR WITH TERRAFORM AT SCALE</h3>
+<h3><a href="post-template.html">DEPLOYING AZURE MONITOR WITH TERRAFORM AT SCALE</a></h3>
 <p>A composable Terraform pattern for workspaces, DCRs, agents, diagnostics and dashboards.</p>
 <p class="meta"><span class="hash">#AZURE-MONITOR</span><span>LVL B08 &middot; TIME 01:12</span><span class="go">PLAY &#8594;</span></p>
 </li>
 <li>
-<h3>DETECTING TERRAFORM DRIFT IN MULTI-CLOUD ENVIRONMENTS</h3>
+<h3><a href="post-template.html">DETECTING TERRAFORM DRIFT IN MULTI-CLOUD ENVIRONMENTS</a></h3>
 <p>Combine scheduled plans and cloud-native policy signals to find meaningful drift across Azure and AWS.</p>
 <p class="meta"><span class="hash">#TERRAFORM</span><span>LVL 929 &middot; TIME 01:15</span><span class="go">PLAY &#8594;</span></p>
 </li>
 <li>
-<h3>FINOPS TAGGING STRATEGY FOR AZURE &amp; AWS</h3>
+<h3><a href="post-template.html">FINOPS TAGGING STRATEGY FOR AZURE &amp; AWS</a></h3>
 <p>Design a small, enforceable cross-cloud tag vocabulary that supports cost, ownership and automation.</p>
 <p class="meta"><span class="hash">#FINOPS</span><span>LVL FB5 &middot; TIME 01:08</span><span class="go">PLAY &#8594;</span></p>
 </li>
 <li>
-<h3>GITHUB ACTIONS FOR MULTI-CLOUD AUTOMATION</h3>
+<h3><a href="post-template.html">GITHUB ACTIONS FOR MULTI-CLOUD AUTOMATION</a></h3>
 <p>Use reusable workflows and federated identities to automate Azure and AWS safely.</p>
 <p class="meta"><span class="hash">#GITHUB-ACTIONS</span><span>LVL 0B2 &middot; TIME 01:22</span><span class="go">PLAY &#8594;</span></p>
 </li>

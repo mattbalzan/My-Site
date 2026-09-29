@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ============ TEMPLATE: replace the 4 lines below per post ============ -->
+<title>DETECTING TERRAFORM DRIFT IN MULTI-CLOUD ENVIRONMENTS // IAIN MCLELLAN</title>
+<meta name="description" content="Combine scheduled plans and cloud-native policy signals to find meaningful drift across Azure and AWS.">
+<meta property="og:title" content="Detecting Terraform Drift in Multi-Cloud Environments">
+<meta property="og:description" content="Combine scheduled plans and cloud-native policy signals to find meaningful drift across Azure and AWS.">
+<!-- ====================================================================== -->
+
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%20shape-rendering='crispEdges'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Cg%20fill='%2300ffff'%3E%3Crect%20x='24'%20y='6'%20width='16'%20height='8'/%3E%3Crect%20x='20'%20y='14'%20width='24'%20height='8'/%3E%3Crect%20x='16'%20y='22'%20width='32'%20height='12'/%3E%3Crect%20x='24'%20y='34'%20width='16'%20height='10'/%3E%3Crect%20x='20'%20y='44'%20width='8'%20height='14'/%3E%3Crect%20x='36'%20y='44'%20width='8'%20height='14'/%3E%3C/g%3E%3Crect%20x='26'%20y='24'%20width='4'%20height='4'%20fill='%23000'/%3E%3Crect%20x='34'%20y='24'%20width='4'%20height='4'%20fill='%23000'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+/* ZX Spectrum 15-colour palette */
+--zx-black:#000000;
+--zx-blue:#0000d7;   --zx-blue-b:#0000ff;
+--zx-red:#d70000;    --zx-red-b:#ff0000;
+--zx-mag:#d700d7;    --zx-mag-b:#ff00ff;
+--zx-grn:#00d700;    --zx-grn-b:#00ff00;
+--zx-cyn:#00d7d7;    --zx-cyn-b:#00ffff;
+--zx-yel:#d7d700;    --zx-yel-b:#ffff00;
+--zx-wht:#d7d7d7;    --zx-wht-b:#ffffff;
+
+--paper:#000000;
+--ink:#d7d7d7;
+--ink-bright:#ffffff;
+--dim:#7a7a7a;
+--pane:#000000;
+--pane-edge:#d7d7d7;
+--accent:var(--zx-cyn-b);
+--accent-2:var(--zx-mag-b);
+--accent-3:var(--zx-yel-b);
+--ok:var(--zx-grn-b);
+--danger:var(--zx-red-b);
+--hdr:96px;
+--ftr:74px;
+--pixel:"Press Start 2P","Courier New",monospace;
+--term:"Share Tech Mono",Consolas,monospace;
+--display:"Anton",Impact,sans-serif;
+}
+
+/* ---------- LIGHT THEME : the 1983 cassette inlay ---------- */
+body:has(#theme-switch:checked){
+--paper:#ece7d8;
+--ink:#161310;
+--ink-bright:#000000;
+--dim:#6a6055;
+--pane:#fffcf2;
+--pane-edge:#161310;
+--accent:var(--zx-blue);
+--accent-2:var(--zx-mag);
+--accent-3:#9a7a00;
+--ok:#007a00;
+--danger:var(--zx-red);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+margin:0;padding:var(--hdr) 0 var(--ftr);
+background:var(--paper);color:var(--ink);
+font-family:var(--term);font-size:17px;line-height:1.7;
+letter-spacing:.01em;overflow-x:hidden;
+transition:background .3s,color .3s;
+}
+
+.vig{position:fixed;inset:0;pointer-events:none;z-index:9998;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%)}
+body:has(#theme-switch:checked) .vig{background:radial-gradient(ellipse at center,transparent 62%,rgba(120,105,80,.3) 100%)}
+
+/* ---------- SINCLAIR RAINBOW ---------- */
+.rainbow{display:flex;height:6px;flex:none}
+.rainbow i{flex:1}
+.rainbow i:nth-child(1){background:var(--zx-red-b)}
+.rainbow i:nth-child(2){background:var(--zx-yel-b)}
+.rainbow i:nth-child(3){background:var(--zx-grn-b)}
+.rainbow i:nth-child(4){background:var(--zx-cyn-b)}
+
+/* ---------- TOP HUD ---------- */
+.hud{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--pane);border-bottom:3px solid var(--pane-edge)}
+.hud-in{display:flex;align-items:center;gap:1.2rem;padding:.75rem clamp(.7rem,3vw,1.4rem)}
+.brand{text-decoration:none;display:flex;align-items:center;gap:.85rem;min-width:0}
+.avatar{flex:none;width:48px;height:48px;border-radius:50%;padding:2px;background:linear-gradient(135deg,var(--zx-red-b),var(--zx-yel-b),var(--zx-grn-b),var(--zx-cyn-b));box-shadow:0 0 14px rgba(0,215,215,.45)}
+.avatar img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--pane)}
+.brand .id{min-width:0}
+.brand b{display:block;font-family:var(--pixel);font-size:clamp(.5rem,1.7vw,.78rem);letter-spacing:.06em;color:var(--accent);text-transform:lowercase}
+.brand .kw{display:block;margin-top:.55rem;font-family:var(--pixel);font-size:clamp(.32rem,1vw,.42rem);letter-spacing:.12em;color:var(--dim);text-transform:lowercase}
+.hud-nav{margin-left:auto;display:flex;align-items:center;gap:clamp(.6rem,2.2vw,1.5rem);flex:none}
+.hud-nav a,.hud-nav label{font-family:var(--pixel);font-size:clamp(.4rem,1.1vw,.55rem);letter-spacing:.08em;color:var(--ink);text-decoration:none;cursor:pointer;white-space:nowrap}
+.hud-nav a:hover,.hud-nav a:focus-visible,.hud-nav label:hover,.hud-nav label:focus-visible{color:var(--accent-2);outline:none}
+.cavern-tag{flex:none;font-family:var(--pixel);font-size:.44rem;letter-spacing:.1em;color:var(--accent-3);border:2px solid var(--accent-3);padding:.45rem .55rem;white-space:nowrap}
+
+/* ---------- BOTTOM STATUS BAR : reading progress ---------- */
+.status{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--pane);border-top:3px solid var(--pane-edge)}
+.status-in{display:flex;align-items:center;gap:clamp(.7rem,2.5vw,1.6rem);padding:.6rem clamp(.7rem,3vw,1.4rem);flex-wrap:wrap}
+.gauge{flex:1 1 220px;min-width:150px}
+.gauge b{display:block;font-family:var(--pixel);font-size:.44rem;letter-spacing:.14em;color:var(--accent-3);margin-bottom:.4rem}
+.air{height:16px;border:2px solid var(--ink);background:transparent;padding:2px}
+.air i{display:block;height:100%;width:0;background:var(--zx-grn-b)}
+.readout{font-family:var(--pixel);font-size:.5rem;letter-spacing:.1em;color:var(--ink);white-space:nowrap;margin:0}
+.readout em{font-style:normal;color:var(--dim);margin-right:.5rem}
+.readout span{color:var(--accent)}
+.lives-wrap{display:flex;align-items:center;gap:.6rem;flex:none}
+.lives-wrap b{font-family:var(--pixel);font-size:.44rem;letter-spacing:.12em;color:var(--dim)}
+#lives{image-rendering:pixelated;height:32px}
+
+/* ---------- LAYOUT ---------- */
+.shell{position:relative;z-index:5;max-width:900px;margin:0 auto;padding:0 clamp(.8rem,3vw,1.3rem)}
+[id]{scroll-margin-top:calc(var(--hdr) + 14px)}
+
+/* ---------- POST HEADER ---------- */
+.crumb{margin:1.8rem 0 1.4rem;font-family:var(--pixel);font-size:.44rem;letter-spacing:.12em}
+.crumb a{color:var(--ok);text-decoration:none}
+.crumb a:hover,.crumb a:focus-visible{color:var(--accent-2);outline:none}
+.post-head{padding:0 0 1.6rem}
+.post-h1{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(1.9rem,6.6vw,3.9rem);line-height:.98;letter-spacing:.005em;color:var(--ink-bright)}
+.post-h1 em{font-style:normal;color:var(--accent)}
+.standfirst{margin:1.2rem 0 0;font-size:1.12rem;color:var(--ink);opacity:.88;border-left:4px solid var(--accent);padding-left:1rem}
+.post-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;margin:1.5rem 0 0;font-family:var(--pixel);font-size:.42rem;letter-spacing:.1em;color:var(--dim)}
+.post-meta .hash{color:var(--accent-3);border:1px solid var(--accent-3);padding:.3rem .45rem;text-decoration:none}
+.post-meta .hash:hover{color:var(--accent);border-color:var(--accent)}
+.post-meta .lvl{margin-left:auto;color:var(--ok)}
+
+/* ---------- PANES ---------- */
+.pane{border:3px solid var(--pane-edge);background:var(--pane);margin:0 0 2rem}
+.pane > .bar{display:flex;align-items:center;gap:.8rem;padding:.6rem .8rem;border-bottom:3px solid var(--pane-edge);background:var(--pane-edge);color:var(--paper)}
+.pane > .bar h2{margin:0;font-family:var(--pixel);font-size:.62rem;letter-spacing:.1em}
+.pane > .bar small{margin-left:auto;font-family:var(--pixel);font-size:.42rem;letter-spacing:.1em;opacity:.75}
+.pane > .body{padding:1.3rem clamp(.9rem,2.6vw,1.5rem) 1.5rem}
+
+/* ---------- TABLE OF CONTENTS ---------- */
+.toc{list-style:none;margin:0;padding:0;counter-reset:lvl}
+.toc li{counter-increment:lvl;border-bottom:1px dashed var(--pane-edge)}
+.toc li:last-child{border-bottom:0}
+.toc a{display:flex;gap:.8rem;align-items:baseline;padding:.6rem .2rem;text-decoration:none;color:var(--ink);font-family:var(--pixel);font-size:.46rem;line-height:2}
+.toc a::before{content:counter(lvl,decimal-leading-zero);color:var(--accent-3)}
+.toc a:hover,.toc a:focus-visible{color:var(--accent);outline:none}
+
+/* ---------- PROSE ---------- */
+.prose{font-size:1.05rem}
+.prose > :first-child{margin-top:0}
+.prose h2{margin:2.3rem 0 1rem;font-family:var(--pixel);font-size:.6rem;letter-spacing:.08em;line-height:2;color:var(--accent);border-left:4px solid var(--accent);padding-left:.8rem;text-transform:uppercase}
+.prose h3{margin:1.9rem 0 .8rem;font-family:var(--pixel);font-size:.5rem;letter-spacing:.08em;line-height:2.1;color:var(--accent-3);text-transform:uppercase}
+.prose p{margin:0 0 1.15rem}
+.prose a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.prose a:hover,.prose a:focus-visible{color:var(--accent-2);outline:none}
+.prose strong{color:var(--accent-3)}
+.prose ul,.prose ol{margin:0 0 1.25rem;padding-left:1.5rem}
+.prose li{margin:0 0 .55rem}
+.prose li::marker{color:var(--accent-3)}
+.prose blockquote{margin:1.5rem 0;padding:.95rem 1.1rem;border:2px dashed var(--pane-edge)}
+.prose blockquote p:last-child{margin:0}
+.prose hr{border:0;height:6px;margin:2.2rem 0;background:linear-gradient(90deg,var(--zx-red-b) 0 25%,var(--zx-yel-b) 25% 50%,var(--zx-grn-b) 50% 75%,var(--zx-cyn-b) 75% 100%)}
+.prose :not(pre) > code{font-family:var(--term);font-size:.96em;color:var(--ok);border:1px solid var(--pane-edge);padding:.05em .35em}
+.prose table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.98rem}
+.prose th,.prose td{border:2px solid var(--pane-edge);padding:.6rem .7rem;text-align:left;vertical-align:top}
+.prose th{font-family:var(--pixel);font-size:.42rem;letter-spacing:.1em;color:var(--accent-3);line-height:2}
+
+/* ---------- CODE BLOCK ---------- */
+.code{margin:1.6rem 0;border:3px solid var(--pane-edge)}
+.code > b{display:flex;gap:.6rem;padding:.5rem .7rem;background:var(--pane-edge);color:var(--paper);font-family:var(--pixel);font-size:.42rem;letter-spacing:.12em}
+.code > b span{margin-left:auto;opacity:.75}
+.code pre{margin:0;padding:1rem;overflow-x:auto;font-family:var(--term);font-size:1rem;line-height:1.6;color:var(--ok);background:var(--pane)}
+
+/* ---------- SCREENSHOT : the only place scanlines live ---------- */
+.shot{margin:1.7rem 0;padding:0}
+.screen{position:relative;background:#000;border:3px solid var(--zx-wht)}
+.screen img{display:block;width:100%;height:auto}
+.scan{position:absolute;inset:0;pointer-events:none;z-index:3;background:repeating-linear-gradient(to bottom,transparent 0 2px,rgba(0,0,0,.34) 3px 4px)}
+.shot figcaption{margin-top:.7rem;font-family:var(--pixel);font-size:.42rem;letter-spacing:.1em;color:var(--dim);line-height:2.2}
+
+/* ---------- CALLOUT ---------- */
+.note{margin:1.6rem 0;border:3px solid var(--accent-3);padding:.95rem 1.1rem}
+.note b{display:block;font-family:var(--pixel);font-size:.44rem;letter-spacing:.12em;color:var(--accent-3);margin-bottom:.65rem}
+.note p:last-child{margin:0}
+.note.danger{border-color:var(--danger)}
+.note.danger b{color:var(--danger)}
+
+/* ---------- TAGS ---------- */
+.tagrow{display:flex;flex-wrap:wrap;gap:.45rem;list-style:none;margin:0;padding:0}
+.tagrow a{display:inline-block;font-family:var(--pixel);font-size:.42rem;letter-spacing:.08em;color:var(--dim);border:2px solid var(--pane-edge);padding:.45rem .55rem;text-decoration:none}
+.tagrow a:hover,.tagrow a:focus-visible{color:var(--accent);border-color:var(--accent);outline:none}
+
+/* ---------- RELATED ---------- */
+.posts{list-style:none;margin:0;padding:0;display:grid;gap:.8rem}
+.posts li{border:2px solid var(--pane-edge);padding:.9rem 1rem 1rem}
+.posts li:hover{border-color:var(--accent)}
+.posts h3{margin:0;font-family:var(--pixel);font-size:.52rem;line-height:1.95;color:var(--ink-bright)}
+.posts h3 a{color:inherit;text-decoration:none}
+.posts h3 a:hover,.posts h3 a:focus-visible{color:var(--accent);outline:none}
+.posts p{margin:.7rem 0 .85rem;font-size:1rem;opacity:.86}
+.posts .meta{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;margin:0;font-family:var(--pixel);font-size:.4rem;letter-spacing:.1em;color:var(--dim)}
+.posts .hash{color:var(--accent-3);border:1px solid var(--accent-3);padding:.3rem .45rem}
+.posts .go{margin-left:auto;color:var(--ok)}
+
+/* ---------- PREV / NEXT ---------- */
+.pager{display:flex;gap:.8rem;flex-wrap:wrap;margin:0 0 2rem}
+.pager a{flex:1 1 240px;border:3px solid var(--pane-edge);padding:.85rem .95rem;text-decoration:none;color:var(--ink)}
+.pager a:hover,.pager a:focus-visible{border-color:var(--accent);outline:none}
+.pager b{display:block;font-family:var(--pixel);font-size:.4rem;letter-spacing:.12em;color:var(--dim);margin-bottom:.6rem}
+.pager span{font-family:var(--pixel);font-size:.48rem;line-height:1.95;color:var(--ink-bright)}
+.pager .next{text-align:right}
+
+footer{text-align:center;font-family:var(--pixel);font-size:.44rem;letter-spacing:.1em;color:var(--dim);line-height:2.4;padding:1rem 1rem 2.4rem}
+footer b{color:var(--accent-3)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+@media (max-width:820px){.brand .kw{display:none}.cavern-tag{display:none}}
+@media (max-width:640px){
+body{font-size:16px;--hdr:118px;--ftr:120px}
+.hud-in{flex-wrap:wrap;row-gap:.5rem}
+.brand{flex:1 1 100%}
+.hud-nav{margin-left:0}
+.pager .next{text-align:left}
+}
+</style>
+</head>
+<body>
+<input type="checkbox" id="theme-switch" hidden aria-label="Switch between the black-screen and cassette-inlay theme">
+<div class="vig" aria-hidden="true"></div>
+
+<header class="hud">
+<div class="rainbow" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="hud-in">
+<a class="brand" href="index2.html#top">
+<span class="avatar"><img src="https://m0seisley.github.io/my_blog/images/avatar.jpg" alt="Iain McLellan" width="96" height="96" decoding="async" referrerpolicy="no-referrer"></span>
+<span class="id">
+<b>Iain McLellan</b>
+<span class="kw">miner willy &middot; azure devops &middot; terraform &middot; multi-cloud &middot; automation</span>
+</span>
+</a>
+<nav class="hud-nav">
+<a href="index2.html#about">ABOUT ME</a>
+<a href="index2.html#posts">POSTS</a>
+<a href="index2.html#search">SEARCH</a>
+<a href="index2.html#contact">CONTACT</a>
+<label for="theme-switch" id="theme-label" tabindex="0" role="switch" aria-checked="false">THEME</label>
+</nav>
+<!-- TEMPLATE: primary tag -->
+<div class="cavern-tag">#TERRAFORM</div>
+</div>
+</header>
+
+<div class="shell" id="top">
+
+<p class="crumb"><a href="index2.html#posts">&#9664; BACK TO POSTS</a></p>
+
+<!-- ============================== POST HEADER ============================== -->
+<header class="post-head">
+<!-- TEMPLATE: wrap part of the title in <em> for the accent colour -->
+<h1 class="post-h1">Detecting <em>Terraform Drift</em> in Multi-Cloud Environments</h1>
+<p class="standfirst">Combine scheduled plans and cloud-native policy signals to find meaningful drift across Azure and AWS &mdash; without drowning the platform team in whitespace diffs.</p>
+<p class="post-meta">
+<a class="hash" href="index2.html#search">#TERRAFORM</a>
+<span>21 SEP 2026</span>
+<span>BY IAIN MCLELLAN</span>
+<span class="lvl">LVL 929 &middot; TIME <b id="readtime">01:15</b></span>
+</p>
+</header>
+
+<!-- ============================== CONTENTS ============================== -->
+<section class="pane" id="contents">
+<div class="bar"><h2>CAVERN MAP</h2><small>CONTENTS</small></div>
+<div class="body">
+<ol class="toc" id="toc"><!-- built from the h2s in .prose --></ol>
+</div>
+</section>
+
+<!-- ============================== ARTICLE ============================== -->
+<article class="pane" id="article">
+<div class="bar"><h2>TRANSMISSION</h2><small>TERRAFORM-DRIFT-DETECTION</small></div>
+<div class="body prose" id="prose">
+
+<p>Drift is the difference between declared configuration, Terraform state and deployed reality. Detect it with a scheduled, read-only pipeline for every workspace &mdash; not with a quarterly spreadsheet and a sense of foreboding.</p>
+
+<h2>Why drift happens</h2>
+<p>Someone fixes an incident in the portal at 3&nbsp;AM. A managed service rotates a property you never declared. A policy engine mutates a resource on write. None of these are malicious, and all of them will eventually surprise a <code>terraform apply</code>.</p>
+<ul>
+<li>Out-of-band changes made under incident pressure.</li>
+<li>Provider defaults shifting between versions.</li>
+<li>Policy or governance engines mutating resources after creation.</li>
+<li>Resources created by another team inside a shared scope.</li>
+</ul>
+
+<h2>The detection pipeline</h2>
+<p>Run a read-only plan on a schedule and act on the exit code. This is the whole mechanism &mdash; everything else is reporting.</p>
+
+<div class="code">
+<b>BASH<span>drift-check.sh</span></b>
+<pre><code>terraform init -input=false
+terraform plan -detailed-exitcode -input=false -no-color</code></pre>
+</div>
+
+<p>Exit code <code>0</code> means no change, <code>2</code> means a diff exists, and <code>1</code> means the check itself failed. Store the plan output, open or update an issue for code <code>2</code>, and alert the platform team separately for code <code>1</code> &mdash; a broken check is a different problem from a drifted resource.</p>
+
+<div class="note">
+<b>&#9632; MINER'S TIP</b>
+<p>Treat exit code <code>1</code> as a page and exit code <code>2</code> as a ticket. Conflating them trains everyone to ignore both.</p>
+</div>
+
+<h2>Reading the results</h2>
+<table>
+<thead><tr><th>Exit code</th><th>Meaning</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><code>0</code></td><td>No changes</td><td>Record the run, close any open drift issue</td></tr>
+<tr><td><code>1</code></td><td>Check failed</td><td>Alert the platform team &mdash; credentials, state lock or provider fault</td></tr>
+<tr><td><code>2</code></td><td>Diff detected</td><td>Open or update an issue with the plan attached</td></tr>
+</tbody>
+</table>
+
+<figure class="shot">
+<div class="screen">
+<!-- TEMPLATE: swap in a real screenshot -->
+<img src="https://m0seisley.github.io/my_blog/images/avatar.jpg" alt="Pipeline run summary showing a detected drift" loading="lazy" referrerpolicy="no-referrer">
+<div class="scan" aria-hidden="true"></div>
+</div>
+<figcaption>FIG 1 &mdash; A SCHEDULED DRIFT RUN REPORTING EXIT CODE 2</figcaption>
+</figure>
+
+<h2>Cross-cloud signals</h2>
+<p>A plan only sees what Terraform manages. Pair it with native configuration evidence so you also catch resources nobody declared in the first place.</p>
+<ol>
+<li><strong>Azure Policy</strong> compliance state for declared guardrails.</li>
+<li><strong>AWS Config</strong> rules for the equivalent controls.</li>
+<li>Activity and CloudTrail logs to attribute the change to a principal.</li>
+</ol>
+
+<blockquote>
+<p>Drift you cannot attribute is drift you cannot prevent. Always capture <em>who</em> alongside <em>what</em>.</p>
+</blockquote>
+
+<hr>
+
+<h2>Keeping the noise down</h2>
+<p>Baseline known-acceptable differences explicitly, with an owner and an expiry date. Anything permanent belongs in code; anything temporary belongs in a documented exception that expires on its own.</p>
+
+<div class="note danger">
+<b>&#9632; DO NOT</b>
+<p>Never auto-apply a drift plan. The whole point of detection is that a human decides whether reality or the code is wrong.</p>
+</div>
+
+</div>
+</article>
+
+<!-- ============================== TAGS ============================== -->
+<section class="pane" id="tags">
+<div class="bar"><h2>TAGS</h2><small>COLLECTED KEYS</small></div>
+<div class="body">
+<ul class="tagrow">
+<li><a href="index2.html#search">#TERRAFORM</a></li>
+<li><a href="index2.html#search">#MULTI-CLOUD</a></li>
+<li><a href="index2.html#search">#GOVERNANCE</a></li>
+<li><a href="index2.html#search">#AZURE</a></li>
+<li><a href="index2.html#search">#AWS</a></li>
+</ul>
+</div>
+</section>
+
+<!-- ============================== PREV / NEXT ============================== -->
+<nav class="pager" aria-label="Post navigation">
+<a href="#"><b>&#9664; PREVIOUS LEVEL</b><span>DEPLOYING AZURE MONITOR WITH TERRAFORM AT SCALE</span></a>
+<a class="next" href="#"><b>NEXT LEVEL &#9654;</b><span>FINOPS TAGGING STRATEGY FOR AZURE &amp; AWS</span></a>
+</nav>
+
+<!-- ============================== RELATED ============================== -->
+<section class="pane" id="related">
+<div class="bar"><h2>RELATED TRANSMISSIONS</h2><small>MORE CAVERNS</small></div>
+<div class="body">
+<ul class="posts">
+<li>
+<h3><a href="#">GITHUB ACTIONS FOR MULTI-CLOUD AUTOMATION</a></h3>
+<p>Use reusable workflows and federated identities to automate Azure and AWS safely.</p>
+<p class="meta"><span class="hash">#GITHUB-ACTIONS</span><span>LVL 0B2 &middot; TIME 01:22</span><span class="go">PLAY &#8594;</span></p>
+</li>
+<li>
+<h3><a href="#">FINOPS TAGGING STRATEGY FOR AZURE &amp; AWS</a></h3>
+<p>Design a small, enforceable cross-cloud tag vocabulary that supports cost, ownership and automation.</p>
+<p class="meta"><span class="hash">#FINOPS</span><span>LVL FB5 &middot; TIME 01:08</span><span class="go">PLAY &#8594;</span></p>
+</li>
+<li>
+<h3><a href="#">DEPLOYING AZURE MONITOR WITH TERRAFORM AT SCALE</a></h3>
+<p>A composable Terraform pattern for workspaces, DCRs, agents, diagnostics and dashboards.</p>
+<p class="meta"><span class="hash">#AZURE-MONITOR</span><span>LVL B08 &middot; TIME 01:12</span><span class="go">PLAY &#8594;</span></p>
+</li>
+</ul>
+</div>
+</section>
+
+</div>
+
+<footer>
+<b>&#9632; INSERT CASSETTE &#9632;</b> &middot; R TAPE LOADING ERROR, 0:1<br>
+&copy; <span id="year"></span> IAIN MCLELLAN &middot; DEVOPS, CLOUD AND AUTOMATION &middot; 48K
+</footer>
+
+<div class="status">
+<div class="status-in">
+<div class="gauge">
+<b>PROGRESS</b>
+<div class="air" id="air"><i></i></div>
+</div>
+<p class="readout"><em>WORDS</em><span id="words">0000</span></p>
+<p class="readout"><em>READ</em><span id="mins">00:00</span></p>
+<div class="lives-wrap">
+<b>LIVES</b>
+<canvas id="lives" width="120" height="64" aria-label="Lives remaining"></canvas>
+</div>
+</div>
+<div class="rainbow" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---- theme: CSS owns it, this only keeps a11y state honest ---- */
+var themeBox = document.getElementById('theme-switch');
+var themeLabel = document.getElementById('theme-label');
+themeLabel.addEventListener('keydown', function(e){
+if(e.key === 'Enter' || e.key === ' '){
+e.preventDefault();
+themeBox.checked = !themeBox.checked;
+themeLabel.setAttribute('aria-checked', themeBox.checked ? 'true' : 'false');
+}
+});
+themeBox.addEventListener('change', function(){
+themeLabel.setAttribute('aria-checked', themeBox.checked ? 'true' : 'false');
+});
+
+var prose = document.getElementById('prose');
+
+/* ---- contents built from the article's own h2s ---- */
+var toc = document.getElementById('toc');
+var heads = [].slice.call(prose.querySelectorAll('h2'));
+heads.forEach(function(h, i){
+if(!h.id) h.id = 'sec-' + (i + 1);
+var li = document.createElement('li');
+var a = document.createElement('a');
+a.href = '#' + h.id;
+a.textContent = h.textContent.toUpperCase();
+li.appendChild(a);
+toc.appendChild(li);
+});
+if(!heads.length) document.getElementById('contents').hidden = true;
+
+/* ---- word count + read time ---- */
+var words = (prose.textContent.trim().match(/\S+/g) || []).length;
+var secs = Math.max(30, Math.round(words / 200 * 60));
+function clock(s){
+return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+}
+document.getElementById('words').textContent = String(words).padStart(4, '0');
+document.getElementById('mins').textContent = clock(secs);
+var rt = document.getElementById('readtime');
+if(rt) rt.textContent = clock(secs);
+
+/* ---- reading progress drives the AIR bar ---- */
+var bar = document.querySelector('#air i');
+function progress(){
+var top = prose.getBoundingClientRect().top + window.scrollY;
+var span = Math.max(1, prose.offsetHeight - window.innerHeight * 0.6);
+var p = Math.min(1, Math.max(0, (window.scrollY - top + window.innerHeight * 0.4) / span));
+bar.style.width = (p * 100).toFixed(1) + '%';
+bar.style.background = p > 0.85 ? 'var(--zx-cyn-b)' : 'var(--zx-grn-b)';
+}
+window.addEventListener('scroll', progress, { passive:true });
+window.addEventListener('resize', progress);
+progress();
+
+/* ---- Miner Willy marching in the status bar ---- */
+var WILLY = [
+['..####..','.######.','.#.##.#.','.######.','..####..','.######.','########','########','.######.','..####..','..####..','..#..#..','..#..#..','..#..#..','.##..##.','.##..##.'],
+['..####..','.######.','.#.##.#.','.######.','..####..','.######.','########','########','.######.','..####..','..####..','..###...','.##..#..','.#...##.','##....##','##....##']
+];
+var lc = document.getElementById('lives').getContext('2d');
+lc.imageSmoothingEnabled = false;
+lc.setTransform(2, 0, 0, 2, 0, 0);
+var tick = 0;
+var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function drawLives(){
+lc.clearRect(0, 0, 120, 64);
+lc.fillStyle = '#00ff00';
+for(var n = 0; n < 3; n++){
+var spr = WILLY[still ? 0 : (Math.floor(tick / 6) + n) % 2];
+for(var r = 0; r < spr.length; r++){
+for(var i = 0; i < 8; i++){
+if(spr[r].charAt(i) === '#') lc.fillRect(n * 11 + i, r, 1, 1);
+}
+}
+}
+}
+drawLives();
+if(!still){
+setInterval(function(){ tick++; drawLives(); }, 100);
+}
+})();
+</script>
+</body>
+</html>
