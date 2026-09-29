@@ -353,6 +353,9 @@ var cv = document.getElementById('asteroids');
 var ctx = cv.getContext('2d');
 var TAU = Math.PI * 2;
 var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// VDI/AVD images usually disable Windows animation effects, which Edge reports as
+// reduced motion — draw one still frame there rather than blanking the canvas.
+var animate = !reduced;
 
 var W = 0, H = 0, DPR = 1;
 var VEC = '#cfe8ff', HOT = '#ff2fc8';
@@ -585,7 +588,7 @@ ctx.fillRect(p.x, p.y, 2, 2);
 }
 ctx.globalAlpha = 1;
 
-requestAnimationFrame(step);
+if(animate) requestAnimationFrame(step);
 }
 
 readColours();
@@ -596,13 +599,9 @@ resize();
 if(ship){ ship.x = Math.min(ship.x, W); ship.y = Math.min(ship.y, H); }
 });
 
-if(reduced){
-cv.style.display = 'none';
-} else {
 newWave();
 spawnShip();
 step();
-}
 })();
 </script>
 </body>
