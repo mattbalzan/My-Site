@@ -6,9 +6,11 @@
 <title>MATT BALZAN // AUTOMATION AI ENDPOINT MICROSOFT</title>
 <meta name="description" content="Matt Balzan — Microsoft AI, automation, cloud and endpoint. Skillset explained in layman's terms, in glorious 1979 vector arcade.">
 <meta name="theme-color" content="#05070c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='10'%20fill='%2305070c'/%3E%3Cpath%20d='M27%2046%20L32%2061%20L37%2046'%20fill='none'%20stroke='%23ff2fc8'%20stroke-width='4'%20stroke-linejoin='round'%20stroke-linecap='round'/%3E%3Cpath%20d='M32%205%20L51%2053%20L32%2042%20L13%2053%20Z'%20fill='none'%20stroke='%2331e4ff'%20stroke-width='5'%20stroke-linejoin='round'%20stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20fill='%2305070c'/%3E%3Cpath%20d='M32%205%20L51%2053%20L32%2042%20L13%2053%20Z'%20fill='none'%20stroke='%2331e4ff'%20stroke-width='5'%20stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root{
 --bg:#05070c;
@@ -24,9 +26,10 @@
 --glow:rgba(49,228,255,.55);
 --vec:#cfe8ff;
 --scan:rgba(0,0,0,.26);
+--hdr:92px;
 --pixel:"Press Start 2P","Courier New",monospace;
 --term:"Share Tech Mono",Consolas,monospace;
---display:"Anton",Impact,sans-serif;
+--display:"Bungee","Press Start 2P",Impact,sans-serif;
 }
 /* ---------- LIGHT THEME (pure CSS switch) ---------- */
 body:has(#theme-switch:checked){
@@ -47,7 +50,7 @@ body:has(#theme-switch:checked){
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;padding-top:92px;background:var(--bg);color:var(--ink);font-family:var(--term);font-size:17px;line-height:1.75;overflow-x:hidden;transition:background .35s,color .35s}
+body{margin:0;padding-top:var(--hdr);background:var(--bg);color:var(--ink);font-family:var(--term);font-size:17px;line-height:1.75;overflow-x:hidden;transition:background .35s,color .35s}
 
 /* ---------- ARCADE BACKGROUND ---------- */
 #asteroids{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.4;pointer-events:none}
@@ -72,13 +75,17 @@ body:has(#theme-switch:checked) .vig{background:radial-gradient(ellipse at cente
 .shell{position:relative;z-index:5;max-width:1180px;margin:0 auto;padding:0 clamp(.9rem,3vw,1.4rem)}
 .hero{padding:2.6rem 0 1rem}
 .kicker{font-family:var(--pixel);font-size:.58rem;letter-spacing:.14em;color:var(--accent);text-shadow:0 0 12px var(--glow);margin:0 0 1.1rem}
-.display{font-family:var(--display);font-weight:400;line-height:.9;margin:0 0 1.4rem;font-size:clamp(2.7rem,12vw,6.6rem);text-transform:uppercase}
-.display .l1{display:block;color:var(--ink);text-shadow:5px 5px 0 var(--line),0 0 34px var(--glow)}
-.display .l2{display:block;color:var(--accent-2);text-shadow:5px 5px 0 rgba(107,15,82,.65),0 0 34px rgba(255,47,200,.45)}
+.display{font-family:var(--display);font-weight:400;line-height:1.02;margin:0 0 1.4rem;font-size:clamp(1.9rem,7.4vw,4.4rem);letter-spacing:-.01em;text-transform:uppercase}
+.display span{display:block}
+/* solid fill + wireframe outline, mirroring the live/spent ships in the HUD */
+.display .l1{color:var(--accent-3);background:linear-gradient(175deg,var(--accent-3) 0%,var(--accent-2) 62%,var(--accent) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 0 rgba(0,0,0,.45)) drop-shadow(0 0 22px var(--glow))}
+.display .l2{color:transparent;-webkit-text-stroke:2px var(--accent);filter:drop-shadow(0 0 16px var(--glow))}
+body:has(#theme-switch:checked) .display .l1{filter:drop-shadow(0 2px 0 rgba(0,0,0,.18))}
 .intro{border-left:4px solid var(--accent);padding-left:1.1rem;margin:0 0 2rem;max-width:64ch;opacity:.92}
 .rule{height:4px;margin:2.2rem 0;border:0;background:linear-gradient(90deg,var(--accent) 0 50%,var(--accent-2) 50% 100%);box-shadow:0 0 16px var(--glow)}
 
-section[id]{scroll-margin-top:110px}
+section[id]{scroll-margin-top:calc(var(--hdr) + 18px)}
+#top{scroll-margin-top:var(--hdr)}
 .panel{position:relative;border:2px solid var(--line);background:var(--panel);padding:1.6rem clamp(1rem,3vw,1.7rem) 1.8rem;margin:0 0 2.6rem;backdrop-filter:blur(2px)}
 .panel::before,.panel::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--accent)}
 .panel::before{top:-2px;left:-2px;border-right:0;border-bottom:0}
@@ -142,7 +149,7 @@ footer b{color:var(--accent-3)}
 .hud{gap:.8rem}
 }
 @media (max-width:640px){
-body{font-size:16px;padding-top:120px}
+body{font-size:16px;--hdr:120px}
 .hud{flex-wrap:wrap;row-gap:.6rem}
 .brand{flex:1 1 100%}
 .hud-nav{margin-left:0}
