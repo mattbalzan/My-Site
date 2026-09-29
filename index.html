@@ -1,65 +1,317 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#02050b">
-<title>Matt Balzan // Systems Engineer</title>
-<meta name="description" content="Matt Balzan's Microsoft cloud, endpoint, automation, security and AI skillset in plain English.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATT // ENDPOINT — Defender Arcade</title>
+<meta name="description" content="Matt Balzan — Microsoft cloud, endpoint, automation and AI skillset, explained in layman's terms. Williams Defender arcade edition.">
+<meta name="theme-color" content="#05070c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-:root{--void:#02050b;--deck:#060b14;--glass:rgba(7,13,24,.86);--cyan:#27e5ff;--pink:#ff3cc8;--lime:#78ff55;--amber:#ffd34d;--blue:#647cff;--ink:#edfaff;--muted:#89a4b4;--line:rgba(71,164,195,.25);--mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;--display:Impact,"Arial Black",sans-serif}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--void);color:var(--ink);font-family:var(--mono);overflow-x:hidden;line-height:1.55}
-/* Full-page CRT treatment: visible but deliberately light enough for long-form reading. */
-.scanlines,.vignette{position:fixed;inset:0;pointer-events:none}.scanlines{z-index:99;background:repeating-linear-gradient(0deg,rgba(255,255,255,.026) 0,rgba(255,255,255,.026) 1px,transparent 1px,transparent 4px);mix-blend-mode:screen}.scanlines:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent,rgba(39,229,255,.035),transparent);height:16%;animation:scan 9s linear infinite}@keyframes scan{from{transform:translateY(-100%)}to{transform:translateY(650%)}}.vignette{z-index:98;background:radial-gradient(ellipse at 50% 35%,transparent 44%,rgba(0,0,0,.72) 100%)}
-#arcade{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.92;filter:drop-shadow(0 0 5px currentColor)}.site{position:relative;z-index:2}
-.rail{position:fixed;left:0;top:0;bottom:0;width:74px;border-right:1px solid var(--line);background:rgba(3,7,14,.86);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;z-index:10}.mark{width:42px;height:42px;margin-top:20px;display:grid;place-items:center;border:1px solid var(--cyan);color:var(--cyan);font-weight:900;box-shadow:0 0 18px rgba(39,229,255,.18)}.rail nav{display:flex;flex-direction:column;gap:20px;margin-top:auto;margin-bottom:auto}.rail a{writing-mode:vertical-rl;transform:rotate(180deg);text-decoration:none;color:var(--muted);font-size:10px;letter-spacing:.18em}.rail a:hover{color:var(--amber)}.rail .live{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime);margin-bottom:22px}
-.content{max-width:1220px;margin-left:max(74px,calc((100vw - 1294px)/2 + 74px));padding:0 clamp(18px,4vw,58px) 70px}.hero{min-height:88vh;display:grid;align-content:center;gap:34px;padding:52px 0}.overline{color:var(--lime);font-size:11px;letter-spacing:.2em;font-weight:800}.hero h1{margin:14px 0 18px;font-family:var(--display);font-weight:400;font-size:clamp(62px,11vw,150px);line-height:.8;text-transform:uppercase;letter-spacing:.015em}.hero h1 span{display:block}.hero h1 .a{color:#fff;text-shadow:5px 5px 0 #12365f,0 0 28px rgba(39,229,255,.32)}.hero h1 .b{color:var(--pink);text-shadow:5px 5px 0 #56113f,0 0 28px rgba(255,60,200,.3)}.lead{max-width:630px;margin:0;color:#bfd4df;font-size:clamp(16px,1.7vw,21px);border-left:3px solid var(--cyan);padding-left:18px}.hero-actions{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}.scoreline{display:flex;align-items:center;gap:22px;margin:0 0 24px;padding:11px 14px;width:max-content;max-width:100%;border:1px solid var(--line);background:rgba(3,8,16,.82);box-shadow:0 0 22px rgba(39,229,255,.08)}.scoreblock{display:flex;flex-direction:column;gap:3px}.scoreblock small{color:var(--muted);font-size:8px;letter-spacing:.16em}.scoreblock strong{color:var(--amber);font-size:16px;letter-spacing:.1em;text-shadow:0 0 10px rgba(255,211,77,.4)}.lives{display:flex;align-items:center;gap:8px}.life{position:relative;width:30px;height:13px;filter:drop-shadow(0 0 5px var(--cyan))}.life:before{content:"";position:absolute;inset:0;background:var(--cyan);clip-path:polygon(0 47%,27% 0,75% 27%,100% 27%,100% 73%,75% 73%,27% 100%)}.button{display:inline-block;text-decoration:none;padding:10px 13px;border:1px solid var(--cyan);color:var(--cyan);font-size:11px;font-weight:800;letter-spacing:.12em;background:rgba(4,11,20,.75)}.button.alt{border-color:var(--pink);color:var(--pink)}
-.hud{border:1px solid var(--line);background:var(--glass);padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.35)}.hud-title{display:flex;justify-content:space-between;color:var(--amber);font-size:10px;letter-spacing:.15em;padding-bottom:10px;border-bottom:1px solid var(--line)}.radar{position:relative;aspect-ratio:1;margin:18px auto;width:min(100%,250px);border:1px solid rgba(39,229,255,.35);border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 27px,rgba(39,229,255,.14) 28px 29px),linear-gradient(90deg,transparent 49.7%,rgba(39,229,255,.2) 50%,transparent 50.3%),linear-gradient(transparent 49.7%,rgba(39,229,255,.2) 50%,transparent 50.3%)}.radar:before{content:"";position:absolute;inset:8%;border-radius:50%;background:conic-gradient(rgba(39,229,255,.36),transparent 18%);animation:sweep 6s linear infinite}.radar:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--pink);left:66%;top:28%;box-shadow:-73px 96px 0 var(--lime),32px 82px 0 var(--amber),0 0 12px var(--pink)}@keyframes sweep{to{transform:rotate(360deg)}}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{padding:9px;border:1px solid var(--line);font-size:10px;color:var(--muted)}.metric b{display:block;color:var(--ink);font-size:12px;margin-top:3px}
-.section{padding:62px 0}.section-title{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin-bottom:22px}.section-title .num{color:var(--pink);font-size:11px}.section-title h2{margin:0;font-size:14px;letter-spacing:.17em;color:var(--amber)}.section-title .line{height:1px;background:linear-gradient(90deg,var(--line),transparent)}.section-title small{color:var(--muted);font-size:9px;letter-spacing:.12em}
-.console-intro{border:1px solid var(--line);border-bottom:0;background:rgba(2,7,14,.94);padding:12px 13px;color:#9fb7c4;font-size:11px}.searchbar{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:rgba(4,9,17,.9);padding:11px 13px;margin-bottom:14px}.searchbar b{color:var(--lime)}.searchbar input{width:100%;border:0;outline:0;background:transparent;color:var(--cyan);font:14px var(--mono)}.searchbar input::placeholder{color:#476170}.count{font-size:10px;color:var(--amber);white-space:nowrap}
-.skills{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}.card{grid-column:span 4;backdrop-filter:blur(2px);min-height:190px;padding:18px;border:1px solid var(--line);background:linear-gradient(135deg,rgba(9,17,30,.94),rgba(4,8,15,.92));position:relative;overflow:hidden;transition:.18s}.card:nth-child(5n+1),.card:nth-child(5n+4){grid-column:span 6}.card:after{content:"";position:absolute;left:0;top:0;width:3px;height:0;background:var(--cyan);box-shadow:0 0 12px var(--cyan);transition:.2s}.card:hover{transform:translateY(-3px);border-color:rgba(39,229,255,.55)}.card:hover:after{height:100%}.card .icon{font-size:22px}.card .tag{position:absolute;right:14px;top:14px;color:var(--lime);font-size:9px;letter-spacing:.12em}.card h3{font-size:16px;margin:20px 0 8px;color:#fff}.card p{font-size:13px;color:#9db4c1;margin:0}.empty{display:none;padding:40px;text-align:center;color:var(--pink);border:1px solid var(--pink)}
-.console{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);background:var(--glass)}.console>div{padding:22px}.console>div+div{border-left:1px solid var(--line)}.prompt{color:var(--lime)}.console p{margin:0 0 12px;color:#a9c0cc}.stack{display:flex;flex-wrap:wrap;gap:7px}.chip{border:1px solid var(--line);padding:7px 9px;font-size:10px;color:var(--cyan);background:rgba(2,7,14,.65)}
-footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-size:10px}.blink{color:var(--amber);animation:blink 1.1s steps(1) infinite}@keyframes blink{50%{opacity:.15}}
-@media(max-width:900px){.hero{padding-top:85px}.card,.card:nth-child(5n+1),.card:nth-child(5n+4){grid-column:span 6}}@media(max-width:600px){.rail{position:absolute;width:100%;height:58px;bottom:auto;border-right:0;border-bottom:1px solid var(--line);flex-direction:row;padding:0 14px}.mark{margin:0;width:34px;height:34px}.rail nav{display:none}.rail .live{margin:0 0 0 auto}.content{margin-left:0;padding-inline:15px}.hero{min-height:auto;padding:110px 0 46px;gap:28px}.hero h1{font-size:61px}.card,.card:nth-child(5n+1),.card:nth-child(5n+4){grid-column:span 12}.console{grid-template-columns:1fr}.console>div+div{border-left:0;border-top:1px solid var(--line)}footer{display:block}.scanlines{background:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0,rgba(255,255,255,.022) 1px,transparent 1px,transparent 4px)}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}#arcade{display:none}}
+:root{
+--void:#05070c;
+--panel:#0a0e17;
+--panel-2:#0d1220;
+--cyan:#31e4ff;
+--magenta:#ff2fc8;
+--green:#39ff14;
+--amber:#ffb000;
+--red:#ff3b3b;
+--ink:#cfe6f5;
+--muted:#6d8298;
+--line:#1b2b44;
+--pixel:"Press Start 2P","Courier New",monospace;
+--term:"Share Tech Mono",Consolas,monospace;
+--display:"Anton",Impact,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--term);font-size:17px;line-height:1.7;overflow-x:hidden}
+#battle{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.42;pointer-events:none}
+.crt{position:fixed;inset:0;pointer-events:none;z-index:9998;background:repeating-linear-gradient(to bottom,transparent 0 2px,rgba(0,0,0,.22) 3px 4px);mix-blend-mode:multiply}
+.vig{position:fixed;inset:0;pointer-events:none;z-index:9997;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.72) 100%)}
+.shell{position:relative;z-index:5;max-width:1180px;margin:0 auto;padding:0 1.1rem}
+.marquee{display:flex;align-items:center;gap:.9rem;margin:1.5rem 0 0;border:2px solid var(--cyan);border-radius:3px;padding:.8rem 1rem;background:rgba(10,20,34,.72);box-shadow:0 0 14px rgba(49,228,255,.4),inset 0 0 22px rgba(49,228,255,.08);position:relative;overflow:hidden}
+.bars{display:flex;gap:3px;align-items:flex-end;height:26px;flex:none}
+.bars i{display:block;width:6px;background:var(--magenta);animation:eq 1.4s ease-in-out infinite}
+.bars i:nth-child(2){background:var(--cyan);animation-delay:.18s}
+.bars i:nth-child(3){background:var(--amber);animation-delay:.36s}
+.bars i:nth-child(4){background:var(--green);animation-delay:.54s}
+@keyframes eq{0%,100%{height:26px}50%{height:11px}}
+.marquee h1{margin:0;font-family:var(--pixel);font-size:.6rem;letter-spacing:.1em;color:#fff}
+.marquee p{margin:.3rem 0 0;font-family:var(--pixel);font-size:.48rem;color:var(--magenta);letter-spacing:.1em}
+.pips{margin-left:auto;display:flex;gap:5px;flex:none}
+.pips span{width:7px;height:7px;background:var(--amber);animation:blink 1.6s steps(2) infinite}
+.pips span:nth-child(2){background:var(--cyan);animation-delay:.4s}
+.pips span:nth-child(3){background:var(--magenta);animation-delay:.8s}
+@keyframes blink{50%{opacity:.15}}
+.avatar{width:96px;height:96px;border-radius:50%;margin:1.5rem 0 1.2rem;padding:3px;background:linear-gradient(135deg,var(--cyan),var(--magenta),var(--amber));box-shadow:0 0 18px rgba(255,47,200,.35)}
+.avatar div{width:100%;height:100%;border-radius:50%;background:var(--panel-2);display:flex;align-items:center;justify-content:center;font-family:var(--pixel);font-size:1.1rem;color:var(--cyan);text-shadow:0 0 10px rgba(49,228,255,.8)}
+nav{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem 1.6rem;margin:0 0 1.3rem}
+nav a{font-family:var(--pixel);font-size:.6rem;letter-spacing:.09em;color:var(--ink);text-decoration:none;padding:.4rem .1rem;transition:color .15s,text-shadow .15s}
+nav a:hover,nav a:focus{color:var(--cyan);text-shadow:0 0 10px rgba(49,228,255,.9);outline:none}
+.codebar{border:2px solid var(--line);border-radius:10px;background:rgba(13,18,32,.75);text-align:center;padding:1rem;font-family:var(--pixel);font-size:.72rem;color:var(--ink);letter-spacing:.12em}
+.codebar b{color:var(--cyan);text-shadow:0 0 12px rgba(49,228,255,.8)}
+.rule{height:4px;margin:1.6rem 0 2rem;border:0;background:linear-gradient(90deg,var(--cyan) 0 50%,var(--magenta) 50% 100%);box-shadow:0 0 16px rgba(49,228,255,.75),0 0 26px rgba(255,47,200,.45)}
+.status{border:2px solid var(--line);background:rgba(10,14,23,.78);padding:1.3rem 1.4rem;margin:0 0 2.2rem;font-family:var(--term);font-size:1.02rem;letter-spacing:.09em;color:var(--amber)}
+.status p{margin:0 0 1.15rem}
+.status p:last-child{margin:0}
+.status span{color:var(--ink)}
+.kicker{font-family:var(--pixel);font-size:.6rem;letter-spacing:.12em;color:var(--cyan);text-shadow:0 0 12px rgba(49,228,255,.6);margin:0 0 1rem}
+.display{font-family:var(--display);font-weight:400;line-height:.92;margin:0 0 1.6rem;font-size:clamp(3rem,13vw,7rem);letter-spacing:.005em;text-transform:uppercase}
+.display .l1{display:block;color:#fff;text-shadow:5px 5px 0 #1d4a7a,0 0 34px rgba(49,228,255,.5)}
+.display .l2{display:block;color:var(--magenta);text-shadow:5px 5px 0 #6b0f52,0 0 38px rgba(255,47,200,.6)}
+.intro{border-left:4px solid var(--cyan);padding:.2rem 0 .2rem 1.1rem;margin:0 0 2.6rem;color:var(--ink);opacity:.9;max-width:62ch}
+.toolbar{display:flex;gap:.9rem;align-items:center;flex-wrap:wrap;margin:0 0 1.8rem}
+.search{flex:1 1 300px;display:flex;align-items:center;gap:.7rem;background:var(--panel);border:2px solid var(--cyan);border-radius:3px;padding:.75rem 1rem;box-shadow:0 0 12px rgba(49,228,255,.35),inset 0 0 18px rgba(49,228,255,.07)}
+.search .pr{font-family:var(--pixel);font-size:.58rem;color:var(--green)}
+.search input{border:0;outline:0;background:transparent;color:var(--cyan);width:100%;font-family:var(--term);font-size:1.05rem;letter-spacing:.03em}
+.search input::placeholder{color:#3c5c72}
+.count{font-family:var(--pixel);font-size:.58rem;color:var(--amber);white-space:nowrap}
+.grid{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));padding:0 0 4rem}
+.card{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:2px solid var(--line);border-radius:3px;padding:1.2rem 1.25rem 1.3rem;transition:transform .14s steps(3),border-color .14s,box-shadow .14s}
+.card:nth-child(odd):hover{border-color:var(--cyan);box-shadow:0 0 16px rgba(49,228,255,.4)}
+.card:nth-child(even):hover{border-color:var(--magenta);box-shadow:0 0 16px rgba(255,47,200,.4)}
+.card:hover{transform:translateY(-4px)}
+.card h2{margin:0 0 .7rem;font-family:var(--pixel);font-size:.7rem;line-height:1.7;color:#fff;display:flex;align-items:center;gap:.6rem}
+.card h2 .ico{font-size:1.3rem;line-height:1}
+.card p{margin:0;font-size:1.01rem;opacity:.88}
+.card p em{color:var(--amber);font-style:normal}
+.badge{display:inline-block;margin-top:.95rem;font-family:var(--pixel);font-size:.47rem;letter-spacing:.1em;text-transform:uppercase;color:var(--green);border:1px solid var(--green);background:rgba(57,255,20,.06);padding:.4rem .6rem}
+.empty{display:none;text-align:center;font-family:var(--pixel);font-size:.75rem;color:var(--red);padding:3rem 1rem}
+footer{position:relative;z-index:5;text-align:center;border-top:2px solid var(--line);padding:1.5rem 1rem 2rem;font-family:var(--pixel);font-size:.53rem;color:var(--muted);line-height:2.1}
+footer b{color:var(--amber)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:560px){
+body{font-size:16px}
+nav{gap:.5rem 1.05rem}
+nav a{font-size:.54rem}
+.card h2{font-size:.62rem}
+#battle{opacity:.3}
+}
 </style>
 </head>
 <body>
-<div class="scanlines" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div><canvas id="arcade" aria-hidden="true"></canvas>
-<div class="site">
-<aside class="rail"><div class="mark">MB</div><nav><a href="#home">HOME</a><a href="#skills">SKILLS</a><a href="#skills">CONSOLE</a></nav><i class="live" title="Online"></i></aside>
-<main class="content">
-<header class="hero" id="home">
-<div><div class="scoreline"><div class="scoreblock"><small>PLAYER HI-SCORE</small><strong>098350</strong></div><div class="scoreblock"><small>SHIPS REMAINING</small><div class="lives" aria-label="Three Defender ships remaining"><i class="life"></i><i class="life"></i><i class="life"></i></div></div></div><div class="overline">PLAYER 1 · PRINCIPAL ENGINEER · SYSTEM ONLINE</div><h1><span class="a">Matt</span><span class="b">Balzan</span></h1><p class="lead">Microsoft cloud, endpoint, security, automation and AI engineering, translated into plain English.</p><div class="hero-actions"><a class="button" href="#skills">VIEW LOADOUT</a><a class="button alt" href="#skills">OPEN CONSOLE</a></div></div>
-
-</header>
-<section class="section" id="skills"><div class="section-title"><span class="num">01</span><h2>COMMAND CONSOLE</h2><span class="line"></span><small>TECHNOLOGY SEARCH</small></div>
-<div class="console-intro"><span class="prompt">C:\MATT&gt;</span></div><label class="searchbar"><b>&gt;</b><input id="q" type="search" placeholder="SCAN SKILLS: INTUNE, AZURE, COPILOT..." autocomplete="off"><span class="count" id="count"></span></label>
-<div class="skills" id="grid">
-<article class="card"><span class="icon">🤖</span><span class="tag">CLOUD OPS</span><h3>Azure Automation</h3><p>The cloud's caffeine-free intern. It never sleeps, never complains, and runs the boring chores at 3 AM.</p></article>
-<article class="card"><span class="icon">📡</span><span class="tag">INTEGRATION</span><h3>Graph API</h3><p>The walkie-talkie for Microsoft services. Ask the right way and Intune or Entra ID hands over what you need.</p></article>
-<article class="card"><span class="icon">🔍</span><span class="tag">DATA</span><h3>KQL</h3><p>Detective mode for logs. Point it at millions of records and find the one rogue error hiding in the corner.</p></article>
-<article class="card"><span class="icon">📈</span><span class="tag">MONITORING</span><h3>Log Analytics</h3><p>The fitness tracker for your IT environment, including every step, wheeze and unexpected fire.</p></article>
-<article class="card"><span class="icon">📱</span><span class="tag">ENDPOINT</span><h3>Microsoft Intune</h3><p>The strict-but-fair babysitter for laptops and phones, wherever those devices happen to wander.</p></article>
-<article class="card"><span class="icon">🚪</span><span class="tag">SECURITY</span><h3>Privileged Access Workstation</h3><p>A digital panic room with a velvet rope. Only privileged administration gets through the door.</p></article>
-<article class="card"><span class="icon">🛡️</span><span class="tag">SECURITY</span><h3>Defender for Endpoint &amp; Identity</h3><p>The bouncer for devices and accounts, spotting trouble and moving it off the dance floor.</p></article>
-<article class="card"><span class="icon">🖥️</span><span class="tag">CLOUD</span><h3>Azure Virtual Desktop</h3><p>Your Windows desktop, teleported into the cloud and available from almost anywhere.</p></article>
-<article class="card"><span class="icon">⚡</span><span class="tag">AUTOMATION</span><h3>PowerShell</h3><p>A supercharged remote control for Windows and the cloud, with enough power to reward careful typing.</p></article>
-<article class="card"><span class="icon">🏭</span><span class="tag">DEVOPS</span><h3>GitHub Actions &amp; Workflow</h3><p>A robotic conveyor belt that builds, tests and ships code automatically.</p></article>
-<article class="card"><span class="icon">🔗</span><span class="tag">INTEGRATION</span><h3>Logic Apps</h3><p>Connect-the-dots automation for grown-ups, moving work between services without repetitive effort.</p></article>
-<article class="card"><span class="icon">☁️</span><span class="tag">SERVERLESS</span><h3>Function &amp; Static Web Apps</h3><p>Code that wakes only when needed, paired with fast, lightweight web experiences.</p></article>
-<article class="card"><span class="icon">📊</span><span class="tag">DATA</span><h3>Power BI &amp; M Query</h3><p>The sous-chef of dashboards, preparing messy data before it reaches the plate.</p></article>
-<article class="card"><span class="icon">🪟</span><span class="tag">ENDPOINT</span><h3>Windows Client</h3><p>Keeping everyday Windows devices secure, patched and productive so users can blame the printer instead.</p></article>
-<article class="card"><span class="icon">🖱️</span><span class="tag">AUTOMATION</span><h3>Power Automate</h3><p>A clicky robot army handling repetitive work in the cloud and on the desktop.</p></article>
-<article class="card"><span class="icon">📄</span><span class="tag">AI</span><h3>Document Intelligence</h3><p>A speed-reader that extracts the important details from forms, receipts and invoices.</p></article>
-<article class="card"><span class="icon">🧠</span><span class="tag">AI</span><h3>Azure OpenAI Analyst</h3><p>A data partner that reads, summarises and answers questions in plain English.</p></article>
-<article class="card"><span class="icon">🧑‍🚀</span><span class="tag">AI</span><h3>Copilot Agents</h3><p>Digital colleagues grounded in your knowledge, workflows and operational context.</p></article>
-<article class="card"><span class="icon">🚚</span><span class="tag">DATA</span><h3>Azure Data Factory</h3><p>The cloud's moving company for data, hauling it between systems and reshaping it on arrival.</p></article>
-</div><p class="empty" id="empty">NO SIGNAL FOUND · TRY A DIFFERENT SCAN</p></section>
-
-<footer><span>© <span id="year"></span> MATT BALZAN // SYSTEMS ENGINEERING</span><span class="blink">INSERT COIN TO CONTINUE</span></footer>
-</main></div>
+<canvas id="battle" aria-hidden="true"></canvas>
+<div class="crt" aria-hidden="true"></div>
+<div class="vig" aria-hidden="true"></div>
+<div class="shell">
+<div class="marquee">
+<span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+<span>
+<h1>MATT // ENDPOINT</h1>
+<p>DEFENDER ARCADE</p>
+</span>
+<span class="pips" aria-hidden="true"><span></span><span></span><span></span></span>
+</div>
+<div class="avatar"><div>MB</div></div>
+<nav>
+<a href="#skills">HOME</a>
+<a href="#skills">SKILLS</a>
+<a href="#status">STATUS</a>
+<a href="#skills">CLOUD</a>
+<a href="#q">SEARCH</a>
+<a href="#skills">AI</a>
+<a href="#about">ABOUT</a>
+<a href="#about">CONTACT</a>
+</nav>
+<div class="codebar">CODE: <b>DEFENDER</b></div>
+<hr class="rule">
+<section class="status" id="status">
+<p>PLAYER 1: <span>Press Start</span></p>
+<p>LEVEL: <span>PRINCIPAL ENGINEER</span></p>
+<p>STATUS: <span>ONLINE</span></p>
+</section>
+<p class="kicker">★ ENDPOINT · CLOUD · AUTOMATION · AI ★</p>
+<h2 class="display"><span class="l1">Microsoft</span><span class="l2">&amp; Automation</span></h2>
+<p class="intro" id="about">My toolbox in layman's terms — Intune, Entra, Azure, PowerShell, Copilot agents and the automation that keeps a 500K-device estate patched, secure and quiet at 3&nbsp;AM.</p>
+<div class="toolbar">
+<label class="search">
+<span class="pr">&gt;</span>
+<input id="q" type="search" placeholder="SCAN FOR A SKILL (INTUNE, KQL, COPILOT…)" aria-label="Search skills" autocomplete="off">
+</label>
+<span class="count" id="count"></span>
+</div>
+<section class="grid" id="skills">
+<article class="card"><h2><span class="ico">🤖</span>Azure Automation</h2><p>The cloud's caffeine-free intern. It never sleeps, never complains, and runs the boring chores at 3 AM so you don't have to roll out of bed for a software update.</p><span class="badge">Cloud Ops</span></article>
+<article class="card"><h2><span class="ico">📡</span>Graph API</h2><p>The walkie-talkie for chatting with Microsoft services. Whisper the right code into it and Intune or Entra ID politely hand over whatever you asked for — no awkward small talk required.</p><span class="badge">Integration</span></article>
+<article class="card"><h2><span class="ico">🔍</span>KQL (Kusto Query Language)</h2><p>Detective mode for logs. Point it at millions of records and it sniffs out the one rogue error hiding in the corner. Magnifying glass and trench coat included.</p><span class="badge">Data</span></article>
+<article class="card"><h2><span class="ico">📈</span>Log Analytics</h2><p>The nosy fitness tracker for your IT environment. It counts every step, every wheeze, and every "why is that thing on fire?" — and it knows you skipped leg day.</p><span class="badge">Monitoring</span></article>
+<article class="card"><h2><span class="ico">📱</span>Microsoft Intune</h2><p>The strict-but-fair babysitter for laptops and phones. It makes them eat their security veggies and follow the rules, even when they wander off to a coffee shop.</p><span class="badge">Endpoint</span></article>
+<article class="card"><h2><span class="ico">🚪</span>Privileged Access Workstation (PAW)</h2><p>A digital panic room with a velvet rope. Only VIP admin accounts get in — hackers are left outside in the rain, banging on the door.</p><span class="badge">Security</span></article>
+<article class="card"><h2><span class="ico">🛡️</span>Microsoft Defender for Endpoint &amp; Identity</h2><p>The bouncer for your computers and accounts. It spots the troublemakers, yells "you're not on the list", and tosses attackers out before they reach the dance floor.</p><span class="badge">Security</span></article>
+<article class="card"><h2><span class="ico">🖥️</span>Azure Virtual Desktop (AVD)</h2><p>Your Windows desktop, teleported into the cloud. Pretend to work from a beach, a tablet, or — gasp — a Mac.</p><span class="badge">Cloud</span></article>
+<article class="card"><h2><span class="ico">⚡</span>PowerShell</h2><p>A supercharged remote control for Windows and the cloud. One right button and you're a wizard; one <em>wrong</em> button and you're explaining things to your boss.</p><span class="badge">Automation</span></article>
+<article class="card"><h2><span class="ico">🏭</span>GitHub Actions &amp; Workflow</h2><p>A robotic conveyor belt for code. It builds, tests and ships your work automatically, like a tiny factory of elves who actually show up on time.</p><span class="badge">DevOps</span></article>
+<article class="card"><h2><span class="ico">🔗</span>Logic Apps</h2><p>Connect-the-dots automation for grown-ups: if an email arrives, save the attachment to OneDrive — without writing a single sweaty line of code.</p><span class="badge">Integration</span></article>
+<article class="card"><h2><span class="ico">☁️</span>Function Apps &amp; Static Web Apps</h2><p>Function Apps are bits of code that only wake up when poked (lazy but efficient). Static Web Apps serve websites faster than you can say "stop loading".</p><span class="badge">Serverless</span></article>
+<article class="card"><h2><span class="ico">📊</span>Power BI &amp; M Query</h2><p>The sous-chef of dashboards. It chops, cleans and seasons messy data before plating it up into reports you'd happily frame.</p><span class="badge">Data</span></article>
+<article class="card"><h2><span class="ico">🪟</span>Windows Client</h2><p>The trusty everyday Windows machines (10/11) people love and yell at. Keeping them secure, patched and happy so users blame the printer instead.</p><span class="badge">Endpoint</span></article>
+<article class="card"><h2><span class="ico">🖱️</span>Power Automate Cloud &amp; Desktop</h2><p>A clicky robot army that does the repetitive busywork for you, in the cloud or on your desktop. Your mouse can retire and take up gardening.</p><span class="badge">Automation</span></article>
+<article class="card"><h2><span class="ico">📄</span>Azure AI Document Intelligence</h2><p>A speed-reader with a photographic memory. It scans invoices, forms and receipts, yanks out the important bits, and never asks for a coffee break.</p><span class="badge">AI</span></article>
+<article class="card"><h2><span class="ico">🧠</span>Azure OpenAI Analyst</h2><p>The overachieving data buddy. It reads everything, summarises the chaos, and answers questions in plain English — the know-it-all friend, minus the smugness.</p><span class="badge">AI</span></article>
+<article class="card"><h2><span class="ico">🧑‍🚀</span>Copilot Agents</h2><p>Custom-built digital colleagues who actually read the handbook. Point one at your onboarding docs, policies or ticket queue and it answers the same question for the 400th time — cheerfully, at 2 AM, without a single passive-aggressive sigh.</p><span class="badge">AI</span></article>
+<article class="card"><h2><span class="ico">🚚</span>Azure Data Factory</h2><p>The cloud's moving company for data. It packs it up, hauls it across systems and tidies it into the right shape — no cardboard boxes or bribing friends with pizza required.</p><span class="badge">Data</span></article>
+</section>
+<p class="empty" id="empty">▮ NO HUMANOIDS FOUND ▮<br>TRY ANOTHER SCAN</p>
+</div>
+<footer>
+<b>INSERT COIN</b> · BUILT WITH A HEALTHY FEAR OF 3 AM PAGES<br>
+&copy; <span id="year"></span> MATT BALZAN — WILLIAMS DEFENDER TRIBUTE BUILD
+</footer>
 <script>
-(()=>{const c=document.getElementById('arcade'),x=c.getContext('2d');let w,h,stars=[],shots=[],ship,raid,cent,pac,ghosts=[],frame=0;const R=(a,b)=>a+Math.random()*(b-a);function resize(){w=c.width=innerWidth;h=c.height=innerHeight;stars=Array.from({length:Math.min(130,Math.floor(w*h/9000))},()=>({x:R(0,w),y:R(0,h),s:R(.3,1.4)}));ship={x:R(20,w*.3),y:h*.18,v:.42};raid={x:w*.82,y:h*.29,a:0};cent={x:w*.12,y:h*.58,d:1};pac={x:w*.65,y:h*.8,d:1,m:0};ghosts=Array.from({length:2},(_,i)=>({x:w*(.78+i*.07),y:h*(.8+i*.03),d:-1,c:i?'#34e7ff':'#ff3cc8'}))}function defender(s){x.save();x.shadowBlur=12;x.shadowColor='#27e5ff';x.fillStyle='#27e5ff';x.fillRect(s.x,s.y,39,4);x.fillRect(s.x+10,s.y-7,18,18);x.fillRect(s.x+29,s.y-2,14,8);x.restore()}function starRaider(s){x.save();x.translate(s.x,s.y);x.rotate(s.a);x.shadowBlur=10;x.shadowColor='#647cff';x.strokeStyle='#8094ff';x.lineWidth=3;x.beginPath();x.moveTo(0,-10);x.lineTo(8,9);x.lineTo(0,5);x.lineTo(-8,9);x.closePath();x.stroke();x.restore()}function ghost(g){x.fillStyle=g.c;x.beginPath();x.arc(g.x,g.y,11,Math.PI,0);x.lineTo(g.x+11,g.y+13);x.lineTo(g.x+5,g.y+8);x.lineTo(g.x,g.y+13);x.lineTo(g.x-5,g.y+8);x.lineTo(g.x-11,g.y+13);x.closePath();x.fill()}function draw(){frame++;x.clearRect(0,0,w,h);stars.forEach(s=>{s.x-=s.s*.16;if(s.x<0)s.x=w;x.fillStyle=s.s>1?'#63839a':'#1d3548';x.fillRect(s.x,s.y,s.s>1?2:1,s.s>1?2:1)});ship.x+=ship.v;if(ship.x>w-35||ship.x<5)ship.v*=-1;ship.y=h*.18+Math.sin(frame/110)*12;defender(ship);if(frame%190===0)shots.push({x:ship.x+29,y:ship.y,v:3.4});shots.forEach((s,i)=>{s.x+=s.v;x.fillStyle='#ffd34d';x.fillRect(s.x,s.y,16,2);if(s.x>w)shots.splice(i,1)});raid.a+=.006;raid.x+=Math.sin(frame/170)*.13;raid.y+=Math.cos(frame/130)*.11;starRaider(raid);cent.x+=cent.d*.23;if(cent.x>w-70||cent.x<5)cent.d*=-1;x.save();x.shadowBlur=9;x.shadowColor='#78ff55';x.fillStyle='#78ff55';for(let i=0;i<8;i++){x.beginPath();x.arc(cent.x+i*11,cent.y+Math.sin(frame/18+i)*7,5,0,Math.PI*2);x.fill()}x.restore();pac.x+=pac.d*.28;if(pac.x>w-12||pac.x<12)pac.d*=-1;pac.m=.2+Math.abs(Math.sin(frame/10))*.38;x.fillStyle='#ffd34d';x.beginPath();const dir=pac.d>0?0:Math.PI;x.arc(pac.x,pac.y,13,dir+pac.m,dir+Math.PI*2-pac.m);x.lineTo(pac.x,pac.y);x.fill();ghosts.forEach((g,i)=>{g.x+=g.d*.2;if(g.x>w-10||g.x<10)g.d*=-1;g.y+=Math.sin(frame/45+i)*.08;ghost(g)});requestAnimationFrame(draw)}resize();addEventListener('resize',resize);draw();const q=document.getElementById('q'),cards=[...document.querySelectorAll('.card')],count=document.getElementById('count'),empty=document.getElementById('empty');function filter(){const t=q.value.toLowerCase().trim();let n=0;cards.forEach(card=>{const show=card.textContent.toLowerCase().includes(t);card.style.display=show?'':'none';if(show)n++});count.textContent=String(n).padStart(2,'0')+' / '+cards.length;empty.style.display=n?'none':'block'}q.addEventListener('input',filter);filter();document.getElementById('year').textContent=new Date().getFullYear()})();
+(function(){
+'use strict';
+var cards = [].slice.call(document.querySelectorAll('.card'));
+var q = document.getElementById('q');
+var countEl = document.getElementById('count');
+var empty = document.getElementById('empty');
+function pad(n){ return String(n).padStart(2,'0'); }
+function render(){
+var t = q.value.trim().toLowerCase(), shown = 0;
+cards.forEach(function(c){
+var hit = c.textContent.toLowerCase().indexOf(t) !== -1;
+c.style.display = hit ? '' : 'none';
+if(hit) shown++;
+});
+countEl.textContent = pad(shown)+' / '+pad(cards.length)+' SKILLS';
+empty.style.display = shown ? 'none' : 'block';
+}
+q.addEventListener('input', render);
+document.addEventListener('keydown', function(e){
+if(e.key === 'Escape'){ q.value=''; render(); q.blur(); }
+});
+document.getElementById('year').textContent = new Date().getFullYear();
+render();
+var cv = document.getElementById('battle');
+var ctx = cv.getContext('2d');
+var W = 0, H = 0, S = 3;
+var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var SPR = {
+ship: ['..XXX...','XXXXXXX.','..XXXXXX','XXXXXXX.','..XXX...'],
+lander:['..XX..','.XXXX.','XXXXXX','.X..X.','X....X','X....X'],
+mutant:['X.XX.X','.XXXX.','XXXXXX','X.XX.X','.X..X.'],
+human: ['.XX.','.XX.','XXXX','.XX.','X..X']
+};
+function blit(spr, x, y, colour, flip){
+ctx.fillStyle = colour;
+for(var r=0;r<spr.length;r++){
+var row = spr[r];
+for(var c=0;c<row.length;c++){
+if(row.charAt(c) !== 'X') continue;
+var cx = flip ? (row.length-1-c) : c;
+ctx.fillRect(x + cx*S, y + r*S, S, S);
+}
+}
+}
+var ship, landers = [], mutants = [], humans = [], shots = [], booms = [];
+function rand(a,b){ return a + Math.random()*(b-a); }
+function spawnLander(){
+landers.push({
+x: rand(0, W), y: rand(H*0.12, H*0.62),
+vx: rand(0.25,0.7) * (Math.random()<0.5?-1:1),
+vy: rand(-0.14,0.14),
+t: rand(0,6.28), hp:1
+});
+}
+function spawnMutant(){
+mutants.push({ x: rand(0,W), y: rand(H*0.15,H*0.55), t: rand(0,6.28), sp: rand(0.35,0.75) });
+}
+function reset(){
+W = cv.width = window.innerWidth;
+H = cv.height = window.innerHeight;
+S = W < 640 ? 2 : 3;
+ship = { x: W*0.2, y: H*0.4, vx: 1.15, vy: 0, cool: 0 };
+landers = []; mutants = []; humans = []; shots = []; booms = [];
+var n = Math.max(3, Math.round(W/420));
+for(var i=0;i<n;i++) spawnLander();
+for(var j=0;j<Math.max(1,Math.round(n/3));j++) spawnMutant();
+for(var k=0;k<4;k++) humans.push({ x: rand(W*0.05,W*0.95), bob: rand(0,6.28) });
+}
+function boom(x,y,colour){
+booms.push({ x:x, y:y, r:2, max: rand(16,30), colour:colour });
+}
+var frame = 0;
+function step(){
+frame++;
+ctx.clearRect(0,0,W,H);
+ship.x += ship.vx;
+ship.y += Math.sin(frame/85) * 0.5;
+if(ship.x > W - 60){ ship.vx = -Math.abs(ship.vx); }
+if(ship.x < 20){ ship.vx = Math.abs(ship.vx); }
+var facing = ship.vx > 0;
+ship.cool--;
+if(ship.cool <= 0){
+shots.push({ x: ship.x + (facing?26:-4), y: ship.y + 2*S, vx: facing?7:-7 });
+ship.cool = 95 + Math.random()*90;
+}
+blit(SPR.ship, ship.x, ship.y, '#31e4ff', !facing);
+for(var i=shots.length-1;i>=0;i--){
+var s = shots[i];
+s.x += s.vx;
+ctx.fillStyle = '#ffffff';
+ctx.fillRect(s.x, s.y, S*4, S);
+if(s.x < -30 || s.x > W+30){ shots.splice(i,1); continue; }
+for(var j=landers.length-1;j>=0;j--){
+var L = landers[j];
+if(Math.abs(s.x - L.x) < 22 && Math.abs(s.y - L.y) < 20){
+boom(L.x, L.y, '#ff2fc8');
+landers.splice(j,1); shots.splice(i,1);
+setTimeout(spawnLander, 2600);
+break;
+}
+}
+}
+landers.forEach(function(L){
+L.t += 0.012;
+L.x += L.vx;
+L.y += L.vy + Math.sin(L.t)*0.28;
+if(L.x < -30) L.x = W+20;
+if(L.x > W+30) L.x = -20;
+if(L.y < H*0.08 || L.y > H*0.7) L.vy *= -1;
+blit(SPR.lander, L.x, L.y, '#ff2fc8');
+if(Math.sin(L.t*1.7) > 0.985){
+ctx.fillStyle = 'rgba(255,47,200,.18)';
+ctx.fillRect(L.x + S*2, L.y + S*6, S, H - (L.y + S*6) - 40);
+}
+});
+mutants.forEach(function(M){
+M.t += 0.03;
+M.x += Math.cos(M.t*1.3) * M.sp;
+M.y += Math.sin(M.t*2.1) * M.sp * 0.6;
+if(M.x < 10) M.x = 10; if(M.x > W-30) M.x = W-30;
+if(M.y < H*0.1) M.y = H*0.1; if(M.y > H*0.65) M.y = H*0.65;
+blit(SPR.mutant, M.x, M.y, '#ff3b3b');
+});
+humans.forEach(function(Hm){
+Hm.bob += 0.02;
+blit(SPR.human, Hm.x, H - 34 + Math.sin(Hm.bob)*2, '#39ff14');
+});
+for(var b=booms.length-1;b>=0;b--){
+var e = booms[b];
+e.r += 1.5;
+ctx.strokeStyle = e.colour;
+ctx.globalAlpha = Math.max(0, 1 - e.r/e.max);
+ctx.lineWidth = S;
+ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, 6.2832); ctx.stroke();
+ctx.globalAlpha = 1;
+if(e.r >= e.max) booms.splice(b,1);
+}
+ctx.strokeStyle = 'rgba(57,255,20,.55)';
+ctx.lineWidth = 2;
+ctx.beginPath();
+ctx.moveTo(0, H-18);
+for(var x=0; x<=W; x+=26){
+ctx.lineTo(x, H - 18 - (Math.sin((x+frame*0.4)/70)*9 + Math.sin((x+frame*0.4)/23)*4));
+}
+ctx.stroke();
+requestAnimationFrame(step);
+}
+window.addEventListener('resize', reset);
+reset();
+if(reduced){ cv.style.display = 'none'; } else { step(); }
+})();
 </script>
-</body></html>
+</body>
+</html>
