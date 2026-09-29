@@ -63,9 +63,9 @@ body:has(#theme-switch:checked) .vig{background:radial-gradient(ellipse at cente
 .brand{text-decoration:none;display:flex;align-items:center;gap:.9rem;flex:0 1 auto;min-width:0}
 .avatar{flex:none;width:48px;height:48px;border-radius:50%;padding:2px;background:linear-gradient(135deg,var(--accent),var(--accent-2),var(--accent-3));box-shadow:0 0 14px var(--glow)}
 .avatar img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--panel)}
-.brand .id{display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap;min-width:0}
-.brand b{font-family:var(--pixel);font-size:clamp(.5rem,1.6vw,.76rem);letter-spacing:.08em;color:var(--accent);text-shadow:0 0 12px var(--glow);text-transform:uppercase}
-.brand .kw{font-family:var(--pixel);font-size:clamp(.34rem,1vw,.44rem);letter-spacing:.14em;color:var(--dim);text-transform:lowercase;white-space:nowrap}
+.brand .id{min-width:0}
+.brand b{display:block;font-family:var(--pixel);font-size:clamp(.5rem,1.6vw,.76rem);letter-spacing:.08em;color:var(--accent);text-shadow:0 0 12px var(--glow);text-transform:uppercase}
+.brand .kw{display:block;margin-top:.5rem;font-family:var(--pixel);font-size:clamp(.34rem,1vw,.44rem);letter-spacing:.14em;color:var(--dim);text-transform:lowercase}
 .hud-nav{margin-left:auto;display:flex;align-items:center;gap:clamp(.7rem,2.2vw,1.6rem);flex:none}
 .hud-nav a,.hud-nav label{font-family:var(--pixel);font-size:clamp(.4rem,1.1vw,.55rem);letter-spacing:.1em;color:var(--ink);text-decoration:none;cursor:pointer;white-space:nowrap;transition:color .15s,text-shadow .15s}
 .hud-nav a:hover,.hud-nav a:focus-visible,.hud-nav label:hover,.hud-nav label:focus-visible{color:var(--accent-2);text-shadow:0 0 10px var(--accent-2);outline:none}
@@ -176,8 +176,7 @@ body{font-size:16px;--hdr:120px}
 <b>MATT BALZAN</b>
 <span class="kw">microsoft &middot; ai &middot; automation &middot; cloud &middot; endpoint</span>
 </span>
-</a>
-<nav class="hud-nav">
+</a><nav class="hud-nav">
 <a href="#about">ABOUT ME</a>
 <a href="#search">SEARCH</a>
 <a href="#contact">CONTACT</a>
