@@ -111,7 +111,7 @@ body:has(#theme-switch:checked) .vig{background:radial-gradient(ellipse at cente
 
 /* ---------- PLAYABLE CABINET ---------- */
 body.playing{overflow:hidden}
-.cabinet{position:fixed;inset:0;z-index:10001;display:flex;align-items:center;justify-content:center;padding:clamp(.5rem,2vw,1.4rem);background:rgba(0,0,0,.88);backdrop-filter:blur(3px)}
+.cabinet{position:fixed;inset:0;z-index:10001;display:flex;align-items:center;justify-content:center;padding:clamp(.5rem,2vw,1.4rem);background:rgba(0,0,0,.88)}
 body:has(#theme-switch:checked) .cabinet{background:rgba(226,219,197,.93)}
 .cabinet[hidden]{display:none}
 .cab-frame{width:min(1000px,100%);max-height:100%;display:flex;flex-direction:column;border:2px solid var(--accent);background:var(--hud);box-shadow:0 0 36px var(--glow)}
@@ -627,6 +627,8 @@ var lives = START_LIVES, respawn = 0, frame = 0, level = 1, score = 0;
 var mode = 'play';           // play | over | win
 var paused = false;
 var raf = 0, looping = false;
+// fixed 60 Hz simulation: game speed is the same at any refresh rate or frame drop
+var TICK = 1000 / 60, MAX_TICKS = 5, last = 0, acc = 0;
 var keys = { left: 0, right: 0, thrust: 0, fire: 0 };
 
 function stats(){
@@ -824,23 +826,16 @@ ctx.closePath();
 ctx.stroke();
 }
 
-function step(){
+function update(){
 frame++;
-ctx.clearRect(0, 0, W, H);
-ctx.lineWidth = 1.6;
-ctx.lineJoin = 'round';
-ctx.lineCap = 'round';
-ctx.strokeStyle = palette.vec;
+var i, j;
 
-var i, j, playing = mode === 'play' && !paused;
-
-if(playing && rocks.length === 0){
+if(rocks.length === 0){
 nextLevel();
-playing = mode === 'play' && !paused;
+if(mode !== 'play') return;
 }
 
 if(ship){
-if(playing){
 if(auto) pilot(); else human();
 if(ship.grace > 0) ship.grace--;
 if(ship.thrust){
@@ -852,9 +847,7 @@ var sp = Math.hypot(ship.vx, ship.vy);
 if(sp > 3.4){ ship.vx = ship.vx / sp * 3.4; ship.vy = ship.vy / sp * 3.4; }
 ship.x += ship.vx; ship.y += ship.vy;
 wrap(ship);
-}
-drawShip();
-} else if(playing && --respawn <= 0){
+} else if(--respawn <= 0){
 if(lives <= 0) reset(); else spawnShip();
 }
 
@@ -864,8 +857,6 @@ var s = shots[i];
 s.x += s.vx; s.y += s.vy;
 wrap(s);
 if(--s.life <= 0){ shots.splice(i, 1); continue; }
-ctx.fillStyle = palette.vec;
-ctx.fillRect(s.x - 1.5, s.y - 1.5, 3, 3);
 var hit = false;
 for(j = rocks.length - 1; j >= 0; j--){
 if(Math.hypot(s.x - rocks[j].x, s.y - rocks[j].y) < rocks[j].r){
@@ -878,24 +869,55 @@ if(hit) shots.splice(i, 1);
 /* rocks */
 for(i = 0; i < rocks.length; i++){
 var A = rocks[i];
-if(playing){ A.x += A.vx; A.y += A.vy; A.a += A.va; wrap(A); }
-drawRock(A);
-if(playing && ship && ship.grace <= 0 && Math.hypot(ship.x - A.x, ship.y - A.y) < A.r + 11){
+A.x += A.vx; A.y += A.vy; A.a += A.va; wrap(A);
+if(ship && ship.grace <= 0 && Math.hypot(ship.x - A.x, ship.y - A.y) < A.r + 11){
 killShip();
 break;
 }
 }
 
 /* debris */
-ctx.fillStyle = palette.hot;
 for(i = bits.length - 1; i >= 0; i--){
 var p = bits[i];
-if(playing){ p.x += p.vx; p.y += p.vy; if(--p.life <= 0){ bits.splice(i, 1); continue; } }
-ctx.globalAlpha = Math.min(1, p.life / 28);
-ctx.fillRect(p.x, p.y, 2, 2);
+p.x += p.vx; p.y += p.vy;
+if(--p.life <= 0) bits.splice(i, 1);
+}
+}
+
+function draw(){
+var i;
+ctx.clearRect(0, 0, W, H);
+ctx.lineWidth = 1.6;
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.strokeStyle = palette.vec;
+
+if(ship) drawShip();
+
+ctx.fillStyle = palette.vec;
+for(i = 0; i < shots.length; i++) ctx.fillRect(shots[i].x - 1.5, shots[i].y - 1.5, 3, 3);
+
+for(i = 0; i < rocks.length; i++) drawRock(rocks[i]);
+
+ctx.fillStyle = palette.hot;
+for(i = 0; i < bits.length; i++){
+ctx.globalAlpha = Math.min(1, bits[i].life / 28);
+ctx.fillRect(bits[i].x, bits[i].y, 2, 2);
 }
 ctx.globalAlpha = 1;
+}
 
+function step(now){
+var dt = last ? now - last : TICK;
+last = now;
+if(mode === 'play' && !paused){
+// cap catch-up so a stalled tab doesn't fast-forward the game
+acc += Math.min(dt, TICK * MAX_TICKS);
+while(acc >= TICK && mode === 'play' && !paused){ update(); acc -= TICK; }
+} else {
+acc = 0;
+}
+draw();
 if(looping) raf = requestAnimationFrame(step);
 }
 
@@ -903,8 +925,8 @@ return {
 resize: resize,
 reset: reset,
 keys: keys,
-frame: function(){ step(); },
-start: function(){ if(looping) return; looping = true; raf = requestAnimationFrame(step); },
+frame: function(){ draw(); },
+start: function(){ if(looping) return; looping = true; last = 0; acc = 0; raf = requestAnimationFrame(step); },
 stop: function(){ looping = false; cancelAnimationFrame(raf); },
 setPaused: function(v){ paused = !!v && mode === 'play'; return paused; },
 isPaused: function(){ return paused; },
