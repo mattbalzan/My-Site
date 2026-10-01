@@ -1,0 +1,4 @@
+{
+    "chat.planAgent.defaultModel": "Claude Opus 5.5 (copilot)",
+    "inlineChat.defaultModel": "Claude Opus 5.5 (copilot)"
+}
