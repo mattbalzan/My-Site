@@ -1800,7 +1800,13 @@ var KEYMAP = {
 ArrowLeft: 'left', a: 'left', A: 'left',
 ArrowRight: 'right', d: 'right', D: 'right',
 ArrowUp: 'thrust', w: 'thrust', W: 'thrust',
-' 'view !== 'game'){
+' ': 'fire', Spacebar: 'fire'
+};
+
+document.addEventListener('keydown', function(e){
+if(!cabOpen) return;
+if(e.key === 'Escape'){ closeCabinet(); return; }
+if(view !== 'game'){
 // menu/result buttons handle Enter themselves; elsewhere Enter means play again
 if(e.key === 'Enter' && view === 'result' && !cabMsg.contains(document.activeElement)){ e.preventDefault(); startRun(); }
 return;
@@ -1811,13 +1817,7 @@ var k = KEYMAP[e.key];
 if(k){ e.preventDefault(); pg.keys[k] = 1; }
 });
 document.addEventListener('keyup', function(e){
-if(!cabOpen || current !== 'ast'= 'p' || e.key === 'P'){ e.preventDefault(); setPause(!pg.isPaused()); return; }
-if(pg.isPaused()) return;
-var k = KEYMAP[e.key];
-if(k){ e.preventDefault(); pg.keys[k] = 1; }
-});
-document.addEventListener('keyup', function(e){
-if(!cabOpen) return;
+if(!cabOpen || current !== 'ast') return;
 var k = KEYMAP[e.key];
 if(k){ e.preventDefault(); pg.keys[k] = 0; }
 });
