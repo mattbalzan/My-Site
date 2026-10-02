@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MISSILE COMMAND | MATT BALZAN</title>
+<meta name="theme-color" content="#05070c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#05070c;
+--panel:rgba(10,14,23,.72);
+--hud:rgba(5,7,12,.86);
+--ink:#dff1ff;
+--dim:#6d8298;
+--line:#1b2b44;
+--accent:#31e4ff;
+--accent-2:#ff2fc8;
+--accent-3:#ffb000;
+--ok:#39ff14;
+--glow:rgba(49,228,255,.55);
+--vec:#cfe8ff;
+--trail-rgb:255,255,255;
+--scan:rgba(0,0,0,.26);
+--pixel:"Press Start 2P","Courier New",monospace;
+--term:"Share Tech Mono",Consolas,monospace;
+}
+/* ---------- LIGHT THEME (pure CSS switch) ---------- */
+body:has(#theme-switch:checked){
+--bg:#e8e2cf;
+--panel:rgba(255,253,244,.82);
+--hud:rgba(232,226,207,.92);
+--ink:#14161c;
+--dim:#5d6470;
+--line:#b9ae8d;
+--accent:#0f5f8f;
+--accent-2:#c2137e;
+--accent-3:#a35c00;
+--ok:#1d7a12;
+--glow:rgba(15,95,143,.35);
+--vec:#14161c;
+--trail-rgb:20,22,28;
+--scan:rgba(0,0,0,.09);
+}
+
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--ink);font-family:var(--term);transition:background .35s,color .35s}
+.crt{position:fixed;inset:0;pointer-events:none;z-index:9999;background:repeating-linear-gradient(to bottom,transparent 0 2px,var(--scan) 3px 4px)}
+.vig{position:fixed;inset:0;pointer-events:none;z-index:9998;background:radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.7) 100%)}
+body:has(#theme-switch:checked) .vig{background:radial-gradient(ellipse at center,transparent 55%,rgba(90,80,50,.35) 100%)}
+
+/* ---------- TEST BENCH ---------- */
+.stage{position:relative;z-index:5;text-align:center;padding:2rem}
+.stage h1{margin:0 0 1rem;font-family:var(--pixel);font-size:clamp(.9rem,3vw,1.4rem);letter-spacing:.12em;color:var(--accent);text-shadow:0 0 14px var(--glow)}
+.stage p{margin:0 0 1.8rem;font-family:var(--pixel);font-size:.5rem;letter-spacing:.12em;line-height:2.2;color:var(--dim)}
+.stage-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* ---------- PLAYABLE CABINET ---------- */
+body.playing{overflow:hidden}
+.cabinet{position:fixed;inset:0;z-index:10001;display:flex;align-items:center;justify-content:center;padding:clamp(.5rem,2vw,1.4rem);background:rgba(0,0,0,.88)}
+body:has(#theme-switch:checked) .cabinet{background:rgba(226,219,197,.93)}
+.cabinet[hidden]{display:none}
+.cab-frame{width:min(1000px,100%);max-height:100%;display:flex;flex-direction:column;border:2px solid var(--accent);background:var(--hud);box-shadow:0 0 36px var(--glow)}
+.cab-bar{display:flex;align-items:center;gap:clamp(.55rem,2vw,1.2rem);flex-wrap:wrap;padding:.7rem 1rem;border-bottom:2px solid var(--line)}
+.cab-title{font-family:var(--pixel);font-size:.62rem;letter-spacing:.12em;color:var(--accent);text-shadow:0 0 12px var(--glow)}
+.cab-stat{font-family:var(--pixel);font-size:.44rem;letter-spacing:.1em;color:var(--dim);white-space:nowrap}
+.cab-stat b{color:var(--ok);font-size:.55rem;margin-left:.45rem}
+.cab-lives{display:flex;gap:.4rem;margin-left:auto}
+.cab-lives svg{width:22px;height:18px;overflow:visible}
+.cab-lives svg path{fill:var(--accent);stroke:var(--accent);stroke-width:1.4;stroke-linejoin:round}
+.cab-lives svg.spent path{fill:none;stroke:var(--accent-2);opacity:.45}
+.cab-btn,.cab-x{font-family:var(--pixel);font-size:.44rem;letter-spacing:.1em;color:var(--ink);background:transparent;border:1px solid var(--line);padding:.45rem .6rem;cursor:pointer;white-space:nowrap}
+.cab-x{font-size:.6rem;padding:.35rem .55rem}
+.cab-btn:hover,.cab-btn:focus-visible,.cab-x:hover,.cab-x:focus-visible{color:var(--accent-2);border-color:var(--accent-2);outline:none}
+.cab-btn[aria-pressed="true"]{color:var(--accent-3);border-color:var(--accent-3)}
+.cab-screen{position:relative;flex:1 1 auto;min-height:0;height:min(62vh,580px);background:var(--bg);overflow:hidden}
+.cab-screen canvas{display:block;cursor:none;touch-action:none;-webkit-user-select:none;user-select:none}
+.cab-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;overflow:auto;text-align:center;padding:1rem;background:rgba(5,7,12,.82);font-family:var(--pixel);font-size:.52rem;line-height:2;color:var(--ink)}
+body:has(#theme-switch:checked) .cab-msg{background:rgba(255,253,244,.88)}
+.cab-msg[hidden]{display:none}
+.cab-msg h3{margin:0;font-size:.9rem;letter-spacing:.1em;color:var(--accent-3);text-shadow:0 0 16px var(--glow)}
+.cab-msg p{margin:0}
+.cab-msg ol{margin:0;padding:0;list-style:none;font-size:.46rem;color:var(--ok)}
+.cab-msg .credits{font-size:.44rem;color:var(--accent);line-height:2.3}
+.cab-msg .note{font-size:.38rem;color:var(--dim);letter-spacing:.1em}
+.cab-paused{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,7,12,.7);font-family:var(--pixel);font-size:.9rem;letter-spacing:.2em;color:var(--accent-3);text-shadow:0 0 18px var(--glow)}
+body:has(#theme-switch:checked) .cab-paused{background:rgba(255,253,244,.78)}
+.cab-paused[hidden]{display:none}
+.cab-again{font-family:var(--pixel);font-size:.55rem;letter-spacing:.1em;color:var(--accent);background:transparent;border:2px solid var(--accent);padding:.7rem 1.1rem;cursor:pointer}
+.cab-again:hover,.cab-again:focus-visible{color:var(--accent-2);border-color:var(--accent-2);outline:none}
+.cab-help{margin:0;padding:.6rem 1rem .75rem;font-family:var(--pixel);font-size:.4rem;letter-spacing:.1em;color:var(--dim);text-align:center;border-top:2px solid var(--line);line-height:2.6}
+.cab-key{display:inline-block;border:1px solid var(--accent);color:var(--accent);padding:.3em .5em;margin:0 .15em;line-height:1}
+@media (max-width:820px){.cab-screen{height:min(52vh,440px)}}
+</style>
+</head>
+<body>
+<input type="checkbox" id="theme-switch" hidden aria-label="Switch between dark and light theme">
+<div class="vig" aria-hidden="true"></div>
+<div class="crt" aria-hidden="true"></div>
+
+<main class="stage">
+<h1>MISSILE COMMAND</h1>
+<p>TEST BENCH &middot; CABINET PREVIEW BEFORE IT GOES INTO INDEX.HTML</p>
+<div class="stage-btns">
+<button type="button" class="cab-again" id="play-link">PLAY</button>
+<label class="cab-again" for="theme-switch" tabindex="0">THEME</label>
+</div>
+</main>
+
+<div class="cabinet" id="cabinet" hidden role="dialog" aria-modal="true" aria-label="Play Missile Command">
+<div class="cab-frame">
+<div class="cab-bar">
+<span class="cab-title">MISSILE COMMAND</span>
+<span class="cab-stat">SCORE<b id="p-score">0</b></span>
+<span class="cab-stat">LEVEL<b id="p-level">1/10</b></span>
+<span class="cab-stat">HI<b id="p-hi">0</b></span>
+<span class="cab-stat">AMMO<b id="p-ammo">10</b></span>
+<span class="cab-lives" id="p-cities" title="Cities remaining"></span>
+<button type="button" class="cab-btn" id="cab-pause" aria-pressed="false">PAUSE</button>
+<button type="button" class="cab-btn" id="cab-reset">RESET</button>
+<button type="button" class="cab-btn" id="cab-sound" aria-pressed="true">SOUND ON</button>
+<button type="button" class="cab-x" id="cab-close" aria-label="Close game">&#10005;</button>
+</div>
+<div class="cab-screen" id="cab-screen">
+<canvas id="play"></canvas>
+<div class="cab-paused" id="cab-paused" hidden>PAUSED</div>
+<div class="cab-msg" id="cab-msg" hidden></div>
+</div>
+<p class="cab-help"><span class="cab-key">MOUSE</span> AIM &middot; <span class="cab-key">CLICK</span> LAUNCH &middot; <span class="cab-key">P</span> PAUSE &middot; <span class="cab-key">ESC</span> EXIT</p>
+</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   MISSILE COMMAND — 1980 vector arcade, Asteroids cabinet
+   ============================================================ */
+var TAU = Math.PI * 2;
+var MAX_LEVEL = 10;
+var START_AMMO = 10;
+var MAX_INCOMING = 3;
+var SILO = 3;                                   // slot index of the middle silo
+var SLOTS = [0.1, 0.22, 0.34, 0.5, 0.66, 0.78, 0.9];
+var CITY_IDX = [0, 1, 2, 4, 5, 6];
+var KILL_PTS = 25;
+var AMMO_PTS = 50;
+var CITY_PTS = 100;
+var RELOAD_TICKS = 240;                         // 4 s at 60 Hz when the silo runs dry mid-wave
+var MISSILE_HALF = 8;                           // incoming missile half-length, px at RS 1
+var AIM_FLOOR = 6;                              // lowest target, px above the silo top
+var BLAST_GROW = 22, BLAST_HOLD = 16, BLAST_FADE = 26;
+var SKY = [[-1,0],[-1,.45],[-.7,.45],[-.7,.8],[-.4,.8],[-.4,.35],[-.15,.35],[-.15,1],[.15,1],[.15,.55],[.4,.55],[.4,.7],[.7,.7],[.7,.4],[1,.4],[1,0]];
+/* missile outline, nose at +1, tail at -1 (after the reference silhouette) */
+var MISSILE = (function(){
+var half = [[1,0],[.8,.08],[.6,.115],[.45,.12],[.15,.12],[-.38,.4],[-.38,.12],[-.72,.12],[-1,.3],[-1,.12]];
+var out = half.slice();
+for(var i = half.length - 1; i > 0; i--) out.push([half[i][0], -half[i][1]]);
+return out;
+})();
+var palette = { vec: '#cfe8ff', hot: '#ff2fc8', amber: '#ffb000', trail: '255,255,255' };
+
+function readColours(){
+var cs = getComputedStyle(document.body);
+palette.vec = cs.getPropertyValue('--vec').trim() || '#cfe8ff';
+palette.trail = cs.getPropertyValue('--trail-rgb').trim() || '255,255,255';
+palette.hot = cs.getPropertyValue('--accent-2').trim() || '#ff2fc8';
+palette.amber = cs.getPropertyValue('--accent-3').trim() || '#ffb000';
+}
+
+function rand(a, b){ return a + Math.random() * (b - a); }
+function jagged(n, lo, hi){
+var j = [];
+for(var i = 0; i < n; i++) j.push(rand(lo, hi));
+return j;
+}
+
+/* ============================================================
+   HI-SCORES — localStorage when the browser allows it,
+   otherwise the table lives only for this session.
+   ============================================================ */
+var HS_KEY = 'mb.missilecommand.hiscores.v1';
+var hsMemory = [];
+var hsPersists = (function(){
+try { localStorage.setItem(HS_KEY + '.probe', '1'); localStorage.removeItem(HS_KEY + '.probe'); return true; }
+catch(e){ return false; }
+})();
+
+function loadScores(){
+if(!hsPersists) return hsMemory.slice();
+try {
+var raw = localStorage.getItem(HS_KEY);
+var arr = raw ? JSON.parse(raw) : [];
+if(!Array.isArray(arr)) return [];
+return arr.filter(function(n){ return typeof n === 'number' && isFinite(n) && n >= 0; }).slice(0, 5);
+} catch(e){ return []; }
+}
+
+function saveScore(score){
+var list = loadScores();
+list.push(Math.max(0, Math.round(score)));
+list.sort(function(a, b){ return b - a; });
+list = list.slice(0, 5);
+hsMemory = list;
+if(hsPersists){
+try { localStorage.setItem(HS_KEY, JSON.stringify(list)); }
+catch(e){ hsPersists = false; }
+}
+return list;
+}
+
+/* ============================================================
+   SOUND — original samples from /media, synth fallback
+   ============================================================ */
+var AudioCtxCls = window.AudioContext || window.webkitAudioContext;
+var ac = null, acBus = null, noiseBuf = null;
+var soundOn = true;
+
+var SFX_DIR = 'media/';
+var SFX_EXT = ['wav', 'mp3', 'ogg'];
+var SFX_FILES = { fire: 'fire', bang3: 'bangLarge', bang2: 'bangMedium', bang1: 'bangSmall' };
+var sample = {};
+var sampleLoadStarted = false;
+
+function audio(){
+if(!AudioCtxCls || !soundOn) return null;
+if(!ac){
+try { ac = new AudioCtxCls(); } catch(e){ AudioCtxCls = null; return null; }
+acBus = ac.createGain();
+acBus.gain.value = 0.55;
+acBus.connect(ac.destination);
+}
+if(ac.state === 'suspended') ac.resume();
+return ac;
+}
+
+function loadSamples(){
+if(sampleLoadStarted || !window.fetch) return;
+var c = audio();
+if(!c) return;
+sampleLoadStarted = true;
+Object.keys(SFX_FILES).forEach(function(key){ tryExt(c, key, SFX_FILES[key], 0); });
+}
+
+function tryExt(c, key, base, i){
+if(i >= SFX_EXT.length) return;
+fetch(SFX_DIR + base + '.' + SFX_EXT[i])
+.then(function(r){ if(!r.ok) throw new Error('missing'); return r.arrayBuffer(); })
+.then(function(ab){ return c.decodeAudioData(ab); })
+.then(function(buf){ sample[key] = buf; })
+.catch(function(){ tryExt(c, key, base, i + 1); });
+}
+
+function playSample(buf, vol){
+var c = audio(); if(!c) return false;
+var s = c.createBufferSource();
+s.buffer = buf;
+var g = c.createGain();
+g.gain.value = vol;
+s.connect(g); g.connect(acBus);
+s.start();
+return true;
+}
+
+function noise(c){
+if(noiseBuf) return noiseBuf;
+var len = Math.floor(c.sampleRate * 0.8);
+noiseBuf = c.createBuffer(1, len, c.sampleRate);
+var d = noiseBuf.getChannelData(0);
+for(var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+return noiseBuf;
+}
+
+function sfxShot(){
+if(sample.fire && playSample(sample.fire, 0.7)) return;
+var c = audio(); if(!c) return;
+var t = c.currentTime;
+var o = c.createOscillator(), g = c.createGain();
+o.type = 'square';
+o.frequency.setValueAtTime(900, t);
+o.frequency.exponentialRampToValueAtTime(130, t + 0.11);
+g.gain.setValueAtTime(0.13, t);
+g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+o.connect(g); g.connect(acBus);
+o.start(t); o.stop(t + 0.13);
+}
+
+function sfxBoom(size){
+var buf = sample['bang' + Math.min(size, 3)] || sample.bang3;
+if(buf && playSample(buf, 0.8)) return;
+var c = audio(); if(!c) return;
+var t = c.currentTime;
+var dur = 0.3 + size * 0.11;
+var s = c.createBufferSource();
+s.buffer = noise(c);
+var f = c.createBiquadFilter();
+f.type = 'lowpass';
+f.frequency.setValueAtTime(1500 - size * 240, t);
+f.frequency.exponentialRampToValueAtTime(80, t + dur);
+var g = c.createGain();
+g.gain.setValueAtTime(0.08 + size * 0.05, t);
+g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+s.connect(f); f.connect(g); g.connect(acBus);
+s.start(t); s.stop(t + dur + 0.05);
+}
+
+/* bonus count-up blip */
+function sfxTick(){
+var c = audio(); if(!c) return;
+var t = c.currentTime;
+var o = c.createOscillator(), g = c.createGain();
+o.type = 'square';
+o.frequency.setValueAtTime(1320, t);
+g.gain.setValueAtTime(0.06, t);
+g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+o.connect(g); g.connect(acBus);
+o.start(t); o.stop(t + 0.06);
+}
+
+/* ============================================================
+   ENGINE
+   ============================================================ */
+function createGame(cv, cfg){
+var ctx = cv.getContext('2d');
+var W = 0, H = 0, DPR = 1, RS = 1;
+var score = 0, level = 1, ammo = START_AMMO, reload = 0;
+var mode = 'play';            // play | over | win
+var phase = 'intro';          // intro | fight | tally | dying
+var phaseT = 0, paused = false, frame = 0;
+var alive = [], rubble = [];
+var incoming = [], abms = [], blasts = [], bits = [];
+var wave = { total: 0, spawned: 0, timer: 0 };
+var banner = null, notice = null, shake = 0;
+var ammoBonus = 0, cityBonus = 0, tallyCities = [];
+var aim = { x: 0, y: 0, on: false, flash: 0 };
+var raf = 0, looping = false;
+var TICK = 1000 / 60, MAX_TICKS = 5, last = 0, acc = 0;
+
+function stats(){
+if(cfg.onStats) cfg.onStats({ score: score, level: level, ammo: ammo, alive: alive.slice(), mode: mode });
+}
+
+function groundY(){ return H - Math.round(30 * RS); }
+function slotX(i){ return W * SLOTS[i]; }
+function siloTop(){ return groundY() - 30 * RS; }
+function mult(){ return 1 + Math.floor((level - 1) / 2); }
+function cityNo(i){ return i < SILO ? i + 1 : i; }
+
+function resize(){
+var d = cfg.measure(), oldW = W, oldH = H;
+DPR = Math.min(window.devicePixelRatio || 1, 2);
+W = Math.max(1, Math.round(d.w));
+H = Math.max(1, Math.round(d.h));
+RS = Math.max(0.55, Math.min(1, Math.min(W, H) / 560));
+cv.width = Math.round(W * DPR);
+cv.height = Math.round(H * DPR);
+cv.style.width = W + 'px';
+cv.style.height = H + 'px';
+ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+if(oldW && oldH && (oldW !== W || oldH !== H)) rescale(W / oldW, H / oldH);
+}
+
+function rescale(sx, sy){
+function p(o){ o.x *= sx; o.y *= sy; }
+var ty = groundY() - 4 * RS;
+incoming.forEach(function(m){ p(m); m.pts.forEach(p); m.tx *= sx; m.vx *= sx; m.vy *= sy; m.swerveAt *= sy; m.ty = ty; });
+abms.forEach(function(b){ p(b); b.ox *= sx; b.oy *= sy; b.tx *= sx; b.ty *= sy; b.vx *= sx; b.vy *= sy; });
+blasts.forEach(p);
+bits.forEach(p);
+aim.x *= sx; aim.y *= sy;
+}
+
+function reset(){
+score = 0; level = 1; mode = 'play'; paused = false;
+alive = SLOTS.map(function(){ return true; });
+rubble = SLOTS.map(function(){ return null; });
+incoming = []; abms = []; blasts = []; bits = [];
+notice = null; shake = 0;
+startWave();
+stats();
+}
+
+/* every wave starts with a full silo of 10 */
+function startWave(){
+ammo = START_AMMO;
+reload = 0;
+wave = { total: 8 + level * 2, spawned: 0, timer: 40, burst: 0 };
+phase = 'intro';
+phaseT = 120;
+banner = { lines: ['WAVE ' + level + ' OF ' + MAX_LEVEL, mult() + 'X POINTS'] };
+}
+
+function beginTally(){
+phase = 'tally';
+phaseT = 60;
+ammoBonus = 0;
+cityBonus = 0;
+tallyCities = CITY_IDX.filter(function(k){ return alive[k]; });
+reload = 0;
+banner = { lines: ['WAVE ' + level + ' CLEAR', 'MISSILE BONUS 0', 'CITY BONUS 0'], done: false };
+}
+
+/* unused missiles, then surviving cities, count off one by one into the score */
+function tally(){
+if(--phaseT > 0) return;
+var p;
+if(ammo > 0){
+p = AMMO_PTS * mult();
+ammo--; ammoBonus += p; score += p;
+banner.lines[1] = 'MISSILE BONUS ' + ammoBonus;
+sfxTick();
+stats();
+phaseT = 8;
+} else if(tallyCities.length){
+tallyCities.shift();
+p = CITY_PTS * mult();
+cityBonus += p; score += p;
+banner.lines[2] = 'CITY BONUS ' + cityBonus;
+sfxTick();
+stats();
+phaseT = 16;
+} else if(!banner.done){
+banner.done = true;
+phaseT = 110;
+} else if(level >= MAX_LEVEL){
+finish('win');
+} else {
+level++;
+startWave();
+stats();
+}
+}
+
+function finish(how){
+var b = 0;
+if(ammo > 0){ b = ammo * AMMO_PTS * mult(); score += b; ammo = 0; }
+mode = how;
+banner = null;
+shake = 0;
+stats();
+if(cfg.onEnd) cfg.onEnd(how, score, b);
+}
+
+function pickTarget(not){
+var opts = [];
+for(var i = 0; i < SLOTS.length; i++) if(alive[i] && i !== not) opts.push(i);
+return opts.length ? opts[Math.floor(Math.random() * opts.length)] : -1;
+}
+
+function spawn(){
+if(wave.spawned >= wave.total || --wave.timer > 0) return;
+if(incoming.length >= MAX_INCOMING){ wave.timer = rand(20, 60); return; }
+launch();
+wave.spawned++;
+if(wave.burst > 0){ wave.burst--; wave.timer = rand(4, 18); return; }
+// salvos of 2-3 from wave 1, more often as levels rise
+if(Math.random() < 0.3 + level * 0.04){
+wave.burst = Math.random() < 0.5 ? 1 : 2;
+wave.timer = rand(4, 18);
+return;
+}
+var gap = Math.max(40, 170 - level * 12);
+wave.timer = gap * rand(0.5, 1.2 + level * 0.08);
+}
+
+function launch(){
+var t = pickTarget(-1);
+if(t < 0) return;
+var x0 = rand(W * 0.04, W * 0.96), y0 = -6;
+var tx = slotX(t) + rand(-12, 12) * RS, ty = groundY() - 4 * RS;
+var secs = Math.max(4.4, 13 - (level - 1) * 0.95) / rand(0.88, 1.12 + level * 0.03);
+var ticks = secs * 60;
+incoming.push({
+x: x0, y: y0, pts: [{ x: x0, y: y0 }], tx: tx, ty: ty,
+vx: (tx - x0) / ticks, vy: (ty - y0) / ticks, target: t,
+swerve: level >= 3 && Math.random() < 0.15 + (level - 3) * 0.06,
+swerveAt: rand(0.25, 0.6) * ty
+});
+}
+
+/* mid-flight retarget: same descent rate, new heading */
+function swerve(m){
+m.swerve = false;
+var t = pickTarget(m.target);
+if(t < 0) return;
+m.pts.push({ x: m.x, y: m.y });
+m.target = t;
+m.tx = slotX(t) + rand(-12, 12) * RS;
+m.vx = (m.tx - m.x) / Math.max(1, (m.ty - m.y) / m.vy);
+}
+
+function burst(x, y, n, spread){
+for(var i = 0; i < n; i++){
+var a = Math.random() * TAU, s = rand(0.5, spread);
+bits.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(24, 60) });
+}
+}
+
+function makeBlast(x, y, kills, max, delay, flick, boom){
+return {
+x: x, y: y, t: -Math.round(delay || 0), kills: kills, max: max || (kills ? 38 : 22),
+flick: !!flick, boom: boom || 0, jag: jagged(12, 0.72, 1.05)
+};
+}
+
+function blastR(f){
+var t = f.t, k;
+if(t < 0) return 0;
+if(t < BLAST_GROW) k = t / BLAST_GROW;
+else if(t < BLAST_GROW + BLAST_HOLD) k = 1;
+else k = 1 - (t - BLAST_GROW - BLAST_HOLD) / BLAST_FADE;
+return Math.max(0, k) * f.max * RS;
+}
+
+function makeRubble(){
+var out = [];
+for(var k = 0; k < 3; k++){
+out.push({ dx: (k - 1) * 12, dy: -rand(3, 6), r: rand(5, 9), jag: jagged(8, 0.6, 1.1), a: rand(0, TAU) });
+}
+return out;
+}
+
+function destroy(i){
+if(!alive[i]) return;
+alive[i] = false;
+rubble[i] = makeRubble();
+burst(slotX(i), groundY() - 10 * RS, 28, 2.8);
+if(i === SILO){
+// the stored missiles cook off: one big fireball, a chain of secondaries, screen shake
+var sx = slotX(SILO), gy = groundY();
+blasts.push(makeBlast(sx, gy - 14 * RS, false, 90, 0, true));
+for(var k = 0; k < 6 + ammo; k++){
+blasts.push(makeBlast(sx + rand(-70, 70) * RS, gy - rand(10, 110) * RS, false, rand(18, 36), rand(6, 90), true, Math.random() < 0.5 ? 2 : 1));
+}
+burst(sx, gy - 14 * RS, 90, 4.2);
+shake = 45;
+sfxBoom(4);
+phase = 'dying';
+phaseT = 160;
+abms = [];
+reload = 0;
+notice = null;
+banner = { lines: ['SILO DESTROYED'] };
+} else {
+var cx = slotX(i), cy = groundY() - 12 * RS;
+sfxBoom(3);
+blasts.push(makeBlast(cx, cy, false, 30, 0, true));
+blasts.push(makeBlast(cx + rand(-14, 14) * RS, cy - rand(4, 16) * RS, false, rand(14, 22), rand(10, 24), true, 2));
+var left = CITY_IDX.filter(function(k){ return alive[k]; }).length;
+notice = { text: left ? 'CITY ' + cityNo(i) + ' DESTROYED' : 'ALL CITIES LOST - DEFEND THE SILO', life: 150 };
+}
+stats();
+}
+
+function impact(m){
+burst(m.x, m.y, 14, 2.2);
+blasts.push(makeBlast(m.x, m.y, false));
+sfxBoom(3);
+destroy(m.target);
+}
+
+function kill(j){
+var m = incoming[j];
+incoming.splice(j, 1);
+burst(m.x, m.y, 10, 2.2);
+score += KILL_PTS * mult();
+sfxBoom(1);
+stats();
+}
+
+function fireAt(x, y){
+aim.flash = 14;
+if(mode !== 'play' || paused || phase !== 'fight' || !alive[SILO] || ammo <= 0) return;
+var ox = slotX(SILO), oy = siloTop();
+y = Math.max(8, Math.min(y, oy - AIM_FLOOR * RS));
+var n = Math.max(1, Math.ceil(Math.hypot(x - ox, y - oy) / (8 * RS)));
+abms.push({ ox: ox, oy: oy, x: ox, y: oy, tx: x, ty: y, vx: (x - ox) / n, vy: (y - oy) / n, n: n });
+ammo--;
+if(ammo === 0) reload = RELOAD_TICKS;
+sfxShot();
+stats();
+}
+
+function update(){
+frame++;
+var i, j;
+if(aim.flash > 0) aim.flash--;
+if(shake > 0) shake--;
+if(notice && --notice.life <= 0) notice = null;
+
+if(phase === 'intro'){
+if(--phaseT <= 0){ phase = 'fight'; banner = null; }
+} else if(phase === 'fight'){
+spawn();
+// silo empty mid-wave: resupply to a full 10 while the game is still live
+if(ammo === 0 && reload > 0 && --reload === 0){
+ammo = START_AMMO;
+notice = { text: START_AMMO + ' MISSILES RELOADED', life: 120 };
+stats();
+}
+} else if(phase === 'tally'){
+tally();
+if(mode !== 'play') return;
+} else if(phase === 'dying'){
+if(--phaseT <= 0){ finish('over'); return; }
+}
+
+/* incoming */
+for(i = incoming.length - 1; i >= 0; i--){
+var m = incoming[i];
+m.x += m.vx; m.y += m.vy;
+if(m.swerve && m.y >= m.swerveAt) swerve(m);
+if(m.y >= m.ty){ incoming.splice(i, 1); impact(m); }
+}
+
+/* counter-missiles */
+for(i = abms.length - 1; i >= 0; i--){
+var b = abms[i];
+b.x += b.vx; b.y += b.vy;
+if(--b.n <= 0){
+abms.splice(i, 1);
+blasts.push(makeBlast(b.tx, b.ty, true, 38 - (level - 1) * 1.5));
+sfxBoom(2);
+}
+}
+
+/* fireballs */
+for(i = blasts.length - 1; i >= 0; i--){
+var f = blasts[i];
+f.t++;
+if(f.t === 0 && f.boom){ sfxBoom(f.boom); burst(f.x, f.y, 12, 2.4); }
+if(frame % 3 === 0) f.jag = jagged(12, 0.72, 1.05);
+if(f.t >= BLAST_GROW + BLAST_HOLD + BLAST_FADE){ blasts.splice(i, 1); continue; }
+if(!f.kills) continue;
+var r = blastR(f) + 2 * RS;
+for(j = incoming.length - 1; j >= 0; j--){
+if(Math.hypot(incoming[j].x - f.x, incoming[j].y - f.y) < r) kill(j);
+}
+}
+
+/* debris */
+for(i = bits.length - 1; i >= 0; i--){
+var p = bits[i];
+p.x += p.vx; p.y += p.vy;
+if(--p.life <= 0) bits.splice(i, 1);
+}
+
+if(phase === 'fight' && wave.spawned >= wave.total && !incoming.length && !abms.length &&
+!blasts.some(function(x){ return x.kills; })) beginTally();
+}
+
+/* ---- drawing ---- */
+function rockPath(x, y, r, jag, a){
+ctx.beginPath();
+for(var i = 0; i < jag.length; i++){
+var ang = a + (i / jag.length) * TAU, rr = r * jag[i];
+var px = x + Math.cos(ang) * rr, py = y + Math.sin(ang) * rr;
+if(i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+}
+ctx.closePath();
+}
+
+/* white at the missile, fading back along the path */
+function trail(x0, y0, pts, x1, y1){
+var g = ctx.createLinearGradient(x0, y0, x1, y1);
+g.addColorStop(0, 'rgba(' + palette.trail + ',0.04)');
+g.addColorStop(1, 'rgba(' + palette.trail + ',1)');
+ctx.strokeStyle = g;
+ctx.beginPath();
+ctx.moveTo(x0, y0);
+for(var k = 0; k < pts.length; k++) ctx.lineTo(pts[k].x, pts[k].y);
+ctx.lineTo(x1, y1);
+ctx.stroke();
+ctx.strokeStyle = palette.vec;
+}
+
+/* nose sits on (m.x, m.y); returns the tail point for the trail */
+function drawMissile(m){
+var a = Math.atan2(m.vy, m.vx), c = Math.cos(a), s = Math.sin(a), L = MISSILE_HALF * RS;
+var cx = m.x - c * L, cy = m.y - s * L;
+function pt(lx, ly){ return [cx + (lx * c - ly * s) * L, cy + (lx * s + ly * c) * L]; }
+var i, p;
+ctx.beginPath();
+for(i = 0; i < MISSILE.length; i++){
+p = pt(MISSILE[i][0], MISSILE[i][1]);
+if(i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+}
+ctx.closePath();
+ctx.stroke();
+// same flicker as the Asteroids ship's thrust flame
+if(frame % 4 < 2){
+var f1 = pt(-1, 0.12), f2 = pt(-1.6 - Math.random() * 0.6, 0), f3 = pt(-1, -0.12);
+ctx.strokeStyle = palette.hot;
+ctx.beginPath();
+ctx.moveTo(f1[0], f1[1]); ctx.lineTo(f2[0], f2[1]); ctx.lineTo(f3[0], f3[1]);
+ctx.stroke();
+ctx.strokeStyle = palette.vec;
+}
+}
+
+function drawCity(cx, gy){
+var hw = 20 * RS, h = 24 * RS;
+ctx.beginPath();
+for(var i = 0; i < SKY.length; i++){
+var px = cx + SKY[i][0] * hw, py = gy - SKY[i][1] * h;
+if(i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+}
+ctx.stroke();
+}
+
+function drawSilo(cx, gy){
+var top = gy - 30 * RS;
+ctx.beginPath();
+ctx.moveTo(cx - 40 * RS, gy);
+ctx.lineTo(cx - 18 * RS, top);
+ctx.lineTo(cx + 18 * RS, top);
+ctx.lineTo(cx + 40 * RS, gy);
+ctx.stroke();
+// ammo pyramid 4-3-2-1, emptied from the top
+ctx.fillStyle = palette.vec;
+var left = ammo, rows = [4, 3, 2, 1];
+for(var r = 0; r < rows.length && left > 0; r++){
+var n = rows[r], y = gy - (9 + r * 6) * RS;
+for(var k = 0; k < n && left > 0; k++, left--){
+ctx.fillRect(cx + (k - (n - 1) / 2) * 7 * RS - 1, y - 2.5 * RS, 2, 5 * RS);
+}
+}
+}
+
+function drawRubble(cx, gy, list){
+if(!list) return;
+ctx.globalAlpha = 0.6;
+for(var i = 0; i < list.length; i++){
+var R = list[i];
+rockPath(cx + R.dx * RS, gy + R.dy * RS, R.r * RS, R.jag, R.a);
+ctx.stroke();
+}
+ctx.globalAlpha = 1;
+}
+
+function text(s, x, y, size, colour){
+ctx.font = Math.round(size * RS) + 'px "Press Start 2P", monospace';
+ctx.fillStyle = colour;
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText(s, x, y);
+}
+
+function draw(){
+var i, gy = groundY();
+ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+ctx.clearRect(0, 0, W, H);
+if(shake > 0 && !paused){
+var q = shake * 0.25 * RS;
+ctx.setTransform(DPR, 0, 0, DPR, rand(-q, q) * DPR, rand(-q, q) * DPR);
+}
+ctx.lineWidth = 1.6;
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.strokeStyle = palette.vec;
+
+ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+
+for(i = 0; i < SLOTS.length; i++){
+var cx = slotX(i);
+if(!alive[i]) drawRubble(cx, gy, rubble[i]);
+else if(i === SILO) drawSilo(cx, gy);
+else drawCity(cx, gy);
+}
+
+/* incoming: gradient trail to the tail, then missile + flame */
+ctx.lineWidth = 1.2;
+for(i = 0; i < incoming.length; i++){
+var m = incoming[i], ma = Math.atan2(m.vy, m.vx);
+trail(m.pts[0].x, m.pts[0].y, m.pts.slice(1), m.x - Math.cos(ma) * 2 * MISSILE_HALF * RS, m.y - Math.sin(ma) * 2 * MISSILE_HALF * RS);
+drawMissile(m);
+}
+
+/* counter-missiles + pink target marks */
+for(i = 0; i < abms.length; i++){
+var b = abms[i];
+trail(b.ox, b.oy, [], b.x, b.y);
+ctx.fillStyle = palette.vec;
+ctx.fillRect(b.x - 1.5, b.y - 1.5, 3, 3);
+ctx.strokeStyle = palette.hot;
+ctx.beginPath(); ctx.moveTo(b.tx - 6 * RS, b.ty); ctx.lineTo(b.tx + 6 * RS, b.ty); ctx.stroke();
+}
+
+/* fireballs */
+ctx.lineWidth = 1.6;
+for(i = 0; i < blasts.length; i++){
+var f = blasts[i], r = blastR(f);
+if(r < 1) continue;
+rockPath(f.x, f.y, r, f.jag, 0);
+ctx.globalAlpha = 0.16;
+ctx.fillStyle = palette.hot;
+ctx.fill();
+ctx.globalAlpha = 1;
+ctx.strokeStyle = ((f.kills || f.flick) && Math.floor(f.t / 4) % 2) ? palette.vec : palette.hot;
+ctx.stroke();
+}
+ctx.strokeStyle = palette.vec;
+
+/* debris */
+ctx.fillStyle = palette.hot;
+for(i = 0; i < bits.length; i++){
+ctx.globalAlpha = Math.min(1, bits[i].life / 28);
+ctx.fillRect(bits[i].x, bits[i].y, 2, 2);
+}
+ctx.globalAlpha = 1;
+
+/* resupply countdown over the silo */
+if(phase === 'fight' && alive[SILO] && ammo === 0 && reload > 0){
+var sx = slotX(SILO), top = siloTop() - 16 * RS, bw = 56 * RS;
+if(Math.floor(frame / 20) % 2 === 0) text('RELOAD', sx, top - 12 * RS, 8, palette.hot);
+ctx.strokeStyle = palette.hot;
+ctx.strokeRect(sx - bw / 2, top - 3 * RS, bw, 6 * RS);
+ctx.fillStyle = palette.hot;
+ctx.fillRect(sx - bw / 2, top - 3 * RS, bw * (1 - reload / RELOAD_TICKS), 6 * RS);
+ctx.strokeStyle = palette.vec;
+}
+
+if(notice) text(notice.text, W / 2, 22 * RS, 9, palette.hot);
+if(banner && mode === 'play'){
+for(i = 0; i < banner.lines.length; i++){
+text(banner.lines[i], W / 2, H * 0.36 + i * 26 * RS, i === 0 ? 14 : 9, i === 0 ? palette.amber : palette.vec);
+}
+}
+
+/* crosshair: horizontal bar only, pink on click */
+if(aim.on && mode === 'play'){
+ctx.strokeStyle = aim.flash > 0 ? palette.hot : palette.vec;
+ctx.lineWidth = 2;
+var cw = (14 - (level - 1) * 0.9) * RS;
+ctx.beginPath(); ctx.moveTo(aim.x - cw, aim.y); ctx.lineTo(aim.x + cw, aim.y); ctx.stroke();
+}
+ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+
+function step(now){
+var dt = last ? now - last : TICK;
+last = now;
+if(mode === 'play' && !paused){
+acc += Math.min(dt, TICK * MAX_TICKS);
+while(acc >= TICK && mode === 'play' && !paused){ update(); acc -= TICK; }
+} else {
+acc = 0;
+}
+draw();
+if(looping) raf = requestAnimationFrame(step);
+}
+
+/* ---- mouse / touch ---- */
+function pos(e){
+var r = cv.getBoundingClientRect();
+aim.x = e.clientX - r.left;
+aim.y = Math.min(e.clientY - r.top, siloTop() - AIM_FLOOR * RS);
+aim.on = true;
+}
+cv.addEventListener('pointermove', pos);
+cv.addEventListener('pointerleave', function(e){ if(e.pointerType === 'mouse') aim.on = false; });
+cv.addEventListener('pointerdown', function(e){
+if(e.button !== 0) return;
+e.preventDefault();
+pos(e);
+fireAt(aim.x, aim.y);
+});
+cv.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+return {
+resize: resize,
+reset: reset,
+start: function(){ if(looping) return; looping = true; last = 0; acc = 0; raf = requestAnimationFrame(step); },
+stop: function(){ looping = false; cancelAnimationFrame(raf); },
+setPaused: function(v){ paused = !!v && mode === 'play'; return paused; },
+isPaused: function(){ return paused; }
+};
+}
+
+/* ============================================================
+   CABINET
+   ============================================================ */
+var CITY_SVG = '<svg viewBox="0 0 24 20" aria-hidden="true"><path d="M1 19 V11 H4 V6 H8 V13 H10 V2 H14 V9 H17 V7 H20 V12 H23 V19 Z"/></svg>';
+var cabinet = document.getElementById('cabinet');
+var cabScreen = document.getElementById('cab-screen');
+var cabMsg = document.getElementById('cab-msg');
+var cabPaused = document.getElementById('cab-paused');
+var pauseBtn = document.getElementById('cab-pause');
+var soundBtn = document.getElementById('cab-sound');
+var pCities = document.getElementById('p-cities');
+var pScore = document.getElementById('p-score');
+var pLevel = document.getElementById('p-level');
+var pHi = document.getElementById('p-hi');
+var pAmmo = document.getElementById('p-ammo');
+var playLink = document.getElementById('play-link');
+var cabOpen = false;
+var hasRun = false;
+
+pCities.innerHTML = new Array(CITY_IDX.length + 1).join(CITY_SVG);
+var cityIcons = [].slice.call(pCities.querySelectorAll('svg'));
+
+function paintHi(){
+var top = loadScores()[0];
+pHi.textContent = top ? String(top) : '0';
+}
+paintHi();
+readColours();
+document.getElementById('theme-switch').addEventListener('change', readColours);
+
+var pg = createGame(document.getElementById('play'), {
+measure: function(){ return { w: cabScreen.clientWidth, h: cabScreen.clientHeight }; },
+onStats: function(s){
+pScore.textContent = String(s.score);
+pLevel.textContent = Math.min(s.level, MAX_LEVEL) + '/' + MAX_LEVEL;
+pAmmo.textContent = String(s.ammo);
+CITY_IDX.forEach(function(k, n){ cityIcons[n].classList.toggle('spent', !s.alive[k]); });
+},
+onEnd: function(how, score, bonus){ setPause(false); showResult(how, score, bonus); }
+});
+
+function setPause(v){
+var on = pg.setPaused(v);
+cabPaused.hidden = !on;
+pauseBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+pauseBtn.textContent = on ? 'RESUME' : 'PAUSE';
+}
+
+function showResult(how, score, bonus){
+var list = saveScore(score);
+var rows = list.map(function(s, i){ return '<li>' + (i + 1) + '. ' + Number(s) + '</li>'; }).join('');
+var html = how === 'win'
+? '<h3>WELL DONE</h3><p>ALL ' + MAX_LEVEL + ' WAVES REPELLED</p>'
+: '<h3>THE END</h3><p>SILO DESTROYED</p>';
+if(bonus > 0) html += '<p>MISSILE BONUS +' + Number(bonus) + '</p>';
+html += '<p>SCORE ' + Number(score) + '</p>';
+html += '<p class="note">HI-SCORES</p><ol>' + rows + '</ol>';
+if(how === 'win'){
+html += '<p class="credits">&mdash; CREDITS &mdash;<br>CODE &amp; DESIGN &middot; MATT BALZAN<br>VECTOR ENGINE &middot; VANILLA JS + CANVAS<br>AFTER ATARI MISSILE COMMAND &middot; 1980<br>NO CITIES WERE HARMED</p>';
+}
+html += '<p class="note">' + (hsPersists ? 'SAVED TO THIS BROWSER' : 'STORAGE BLOCKED &middot; THIS SESSION ONLY') + '</p>';
+html += '<button type="button" class="cab-again" id="cab-again">PLAY AGAIN</button>';
+cabMsg.innerHTML = html;
+cabMsg.hidden = false;
+paintHi();
+var again = document.getElementById('cab-again');
+if(again) again.focus();
+}
+
+function startRun(){
+hasRun = true;
+cabMsg.hidden = true;
+cabMsg.innerHTML = '';
+pg.resize();
+pg.reset();
+setPause(false);
+pg.start();
+}
+
+function openCabinet(){
+if(cabOpen) return;
+cabOpen = true;
+cabinet.hidden = false;
+document.body.classList.add('playing');
+loadSamples();
+if(hasRun){
+pg.resize();
+pg.start();
+} else {
+startRun();
+}
+document.getElementById('cab-close').focus();
+}
+
+function closeCabinet(){
+if(!cabOpen) return;
+cabOpen = false;
+setPause(true);
+pg.stop();
+cabinet.hidden = true;
+document.body.classList.remove('playing');
+playLink.focus();
+}
+
+playLink.addEventListener('click', openCabinet);
+document.getElementById('cab-close').addEventListener('click', closeCabinet);
+pauseBtn.addEventListener('click', function(){ setPause(!pg.isPaused()); });
+document.getElementById('cab-reset').addEventListener('click', function(){ this.blur(); startRun(); });
+soundBtn.addEventListener('click', function(){
+soundOn = !soundOn;
+soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+soundBtn.textContent = soundOn ? 'SOUND ON' : 'SOUND OFF';
+if(soundOn) loadSamples();
+else if(ac && ac.state === 'running') ac.suspend();
+});
+document.addEventListener('visibilitychange', function(){
+if(document.hidden && cabOpen) setPause(true);
+});
+window.addEventListener('resize', function(){ if(cabOpen) pg.resize(); });
+cabinet.addEventListener('mousedown', function(e){ if(e.target === cabinet) closeCabinet(); });
+cabMsg.addEventListener('click', function(e){ if(e.target.id === 'cab-again') startRun(); });
+cabPaused.addEventListener('click', function(){ setPause(false); });
+
+document.addEventListener('keydown', function(e){
+if(!cabOpen) return;
+if(e.key === 'Escape'){ closeCabinet(); return; }
+if(e.key === 'Enter' && !cabMsg.hidden){ e.preventDefault(); startRun(); return; }
+if(e.key === 'p' || e.key === 'P'){ e.preventDefault(); setPause(!pg.isPaused()); }
+});
+
+document.querySelector('label[for="theme-switch"]').addEventListener('keydown', function(e){
+if(e.key === 'Enter' || e.key === ' '){
+e.preventDefault();
+var box = document.getElementById('theme-switch');
+box.checked = !box.checked;
+box.dispatchEvent(new Event('change'));
+}
+});
+})();
+</script>
+</body>
+</html>

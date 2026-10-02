@@ -55,6 +55,7 @@ st.setProperty('--t-h4', hue(o));
 --ok:#39ff14;
 --glow:rgba(49,228,255,.55);
 --vec:#cfe8ff;
+--trail-rgb:255,255,255;
 --scan:rgba(0,0,0,.26);
 --hdr:92px;
 --pixel:"Press Start 2P","Courier New",monospace;
@@ -77,6 +78,7 @@ body:has(#theme-switch:checked){
 --ok:#1d7a12;
 --glow:rgba(15,95,143,.35);
 --vec:#14161c;
+--trail-rgb:20,22,28;
 --scan:rgba(0,0,0,.09);
 --t-s:85%;--t-l:36%;--t-a:.35;
 }
@@ -156,6 +158,14 @@ body:has(#theme-switch:checked) .cab-paused{background:rgba(255,253,244,.78)}
 .cab-help{margin:0;padding:.6rem 1rem .75rem;font-family:var(--pixel);font-size:.4rem;letter-spacing:.1em;color:var(--dim);text-align:center;border-top:2px solid var(--line);line-height:2.6}
 .cab-key{display:inline-block;border:1px solid var(--accent);color:var(--accent);padding:.3em .5em;margin:0 .15em;line-height:1}
 @media (pointer:coarse){.cab-pad{display:flex}.cab-help{display:none}}
+/* one cabinet, two games: is-menu = game select, is-mc = Missile Command, else Asteroids */
+.cabinet.is-menu .game-only,.cabinet.is-menu .cab-help,.cabinet.is-menu .cab-pad,.cabinet.is-mc .ast-only,.cabinet:not(.is-mc) .mc-only{display:none}
+.cabinet.is-menu #cab-sound{margin-left:auto}
+.cab-screen canvas.mc-canvas{cursor:none;touch-action:none;-webkit-user-select:none;user-select:none}
+.cab-menu{display:flex;flex-direction:column;gap:.8rem;min-width:min(280px,80%)}
+#p-cities svg{width:22px;height:18px}
+#p-cities svg path{stroke-width:1.4}
+#p-cities svg.spent path{stroke:var(--accent-2);opacity:.45}
 
 /* ---------- LAYOUT ---------- */
 .shell{position:relative;z-index:5;max-width:1180px;margin:0 auto;padding:0 clamp(.9rem,3vw,1.4rem)}
@@ -364,31 +374,36 @@ body{font-size:16px;--hdr:120px}
 
 </div>
 
-<div class="cabinet" id="cabinet" hidden role="dialog" aria-modal="true" aria-label="Play Asteroids">
+<div class="cabinet is-menu" id="cabinet" hidden role="dialog" aria-modal="true" aria-label="Arcade">
 <div class="cab-frame">
 <div class="cab-bar">
-<span class="cab-title">ASTEROIDS</span>
-<span class="cab-stat">SCORE<b id="p-score">0</b></span>
-<span class="cab-stat">LEVEL<b id="p-level">1/10</b></span>
-<span class="cab-stat">HI<b id="p-hi">0</b></span>
-<span class="cab-lives" id="p-lives" title="Ships remaining"></span>
-<button type="button" class="cab-btn" id="cab-pause" aria-pressed="false">PAUSE</button>
-<button type="button" class="cab-btn" id="cab-reset">RESET</button>
+<span class="cab-title" id="cab-title">ARCADE</span>
+<span class="cab-stat game-only">SCORE<b id="p-score">0</b></span>
+<span class="cab-stat game-only">LEVEL<b id="p-level">1/10</b></span>
+<span class="cab-stat game-only">HI<b id="p-hi">0</b></span>
+<span class="cab-stat game-only mc-only">AMMO<b id="p-ammo">10</b></span>
+<span class="cab-lives game-only ast-only" id="p-lives" title="Ships remaining"></span>
+<span class="cab-lives game-only mc-only" id="p-cities" title="Cities remaining"></span>
+<button type="button" class="cab-btn game-only" id="cab-pause" aria-pressed="false">PAUSE</button>
+<button type="button" class="cab-btn game-only" id="cab-reset">RESET</button>
+<button type="button" class="cab-btn game-only" id="cab-games">GAMES</button>
 <button type="button" class="cab-btn" id="cab-sound" aria-pressed="true">SOUND ON</button>
 <button type="button" class="cab-x" id="cab-close" aria-label="Close game">&#10005;</button>
 </div>
 <div class="cab-screen" id="cab-screen">
-<canvas id="play"></canvas>
+<canvas id="play" class="ast-only"></canvas>
+<canvas id="play-mc" class="mc-only mc-canvas"></canvas>
 <div class="cab-paused" id="cab-paused" hidden>PAUSED</div>
 <div class="cab-msg" id="cab-msg" hidden></div>
 </div>
-<div class="cab-pad" id="cab-pad" aria-hidden="true">
+<div class="cab-pad ast-only" id="cab-pad" aria-hidden="true">
 <button type="button" data-k="left" aria-label="Rotate left"><i class="cab-arrow l"></i></button>
 <button type="button" data-k="thrust" aria-label="Thrust"><i class="cab-arrow u"></i></button>
 <button type="button" data-k="right" aria-label="Rotate right"><i class="cab-arrow r"></i></button>
 <button type="button" data-k="fire">FIRE</button>
 </div>
-<p class="cab-help"><span class="cab-key"><i class="cab-arrow l"></i></span> <span class="cab-key"><i class="cab-arrow r"></i></span> ROTATE &middot; <span class="cab-key"><i class="cab-arrow u"></i></span> THRUST &middot; <span class="cab-key">SPACE</span> FIRE &middot; <span class="cab-key">P</span> PAUSE &middot; <span class="cab-key">ESC</span> EXIT</p>
+<p class="cab-help ast-only"><span class="cab-key"><i class="cab-arrow l"></i></span> <span class="cab-key"><i class="cab-arrow r"></i></span> ROTATE &middot; <span class="cab-key"><i class="cab-arrow u"></i></span> THRUST &middot; <span class="cab-key">SPACE</span> FIRE &middot; <span class="cab-key">P</span> PAUSE &middot; <span class="cab-key">ESC</span> EXIT</p>
+<p class="cab-help mc-only"><span class="cab-key">MOUSE</span> AIM &middot; <span class="cab-key">CLICK</span> LAUNCH &middot; <span class="cab-key">P</span> PAUSE &middot; <span class="cab-key">ESC</span> EXIT</p>
 </div>
 </div>
 <footer>
@@ -464,12 +479,14 @@ var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 // VDI/AVD images usually disable Windows animation effects, which Edge reports as
 // reduced motion — draw one still frame there rather than blanking the canvas.
 var animate = !reduced;
-var palette = { vec: '#cfe8ff', hot: '#ff2fc8' };
+var palette = { vec: '#cfe8ff', hot: '#ff2fc8', amber: '#ffb000', trail: '255,255,255' };
 
 function readColours(){
 var cs = getComputedStyle(document.body);
 palette.vec = cs.getPropertyValue('--vec').trim() || '#cfe8ff';
 palette.hot = cs.getPropertyValue('--accent-2').trim() || '#ff2fc8';
+palette.amber = cs.getPropertyValue('--accent-3').trim() || '#ffb000';
+palette.trail = cs.getPropertyValue('--trail-rgb').trim() || '255,255,255';
 }
 
 function rand(a, b){ return a + Math.random() * (b - a); }
@@ -484,31 +501,30 @@ els.forEach(function(el, i){ el.classList.toggle('spent', i >= n); });
    HI-SCORES — localStorage when the browser allows it,
    otherwise the table lives only for this session.
    ============================================================ */
-var HS_KEY = 'mb.asteroids.hiscores.v1';
-var hsMemory = [];
+var hsMemory = {};
 var hsPersists = (function(){
-try { localStorage.setItem(HS_KEY + '.probe', '1'); localStorage.removeItem(HS_KEY + '.probe'); return true; }
+try { localStorage.setItem('mb.arcade.probe', '1'); localStorage.removeItem('mb.arcade.probe'); return true; }
 catch(e){ return false; }
 })();
 
-function loadScores(){
-if(!hsPersists) return hsMemory.slice();
+function loadScores(key){
+if(!hsPersists) return (hsMemory[key] || []).slice();
 try {
-var raw = localStorage.getItem(HS_KEY);
+var raw = localStorage.getItem(key);
 var arr = raw ? JSON.parse(raw) : [];
 if(!Array.isArray(arr)) return [];
 return arr.filter(function(n){ return typeof n === 'number' && isFinite(n) && n >= 0; }).slice(0, 5);
 } catch(e){ return []; }
 }
 
-function saveScore(score){
-var list = loadScores();
+function saveScore(key, score){
+var list = loadScores(key);
 list.push(Math.max(0, Math.round(score)));
 list.sort(function(a, b){ return b - a; });
 list = list.slice(0, 5);
-hsMemory = list;
+hsMemory[key] = list;
 if(hsPersists){
-try { localStorage.setItem(HS_KEY, JSON.stringify(list)); }
+try { localStorage.setItem(key, JSON.stringify(list)); }
 catch(e){ hsPersists = false; }
 }
 return list;
@@ -612,6 +628,19 @@ g.gain.setValueAtTime(0.08 + size * 0.05, t);
 g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
 s.connect(f); f.connect(g); g.connect(acBus);
 s.start(t); s.stop(t + dur + 0.05);
+}
+
+/* bonus count-up blip */
+function sfxTick(){
+var c = audio(); if(!c) return;
+var t = c.currentTime;
+var o = c.createOscillator(), g = c.createGain();
+o.type = 'square';
+o.frequency.setValueAtTime(1320, t);
+g.gain.setValueAtTime(0.06, t);
+g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+o.connect(g); g.connect(acBus);
+o.start(t); o.stop(t + 0.06);
 }
 
 /* ============================================================
@@ -936,6 +965,597 @@ recentre: function(){ if(ship){ ship.x = Math.min(ship.x, W); ship.y = Math.min(
 }
 
 /* ============================================================
+   MISSILE COMMAND — 1980 vector arcade, cabinet only
+   ============================================================ */
+function createMissileCommand(cv, cfg){
+var START_AMMO = 10;
+var MAX_INCOMING = 3;
+var SILO = 3;                                   // slot index of the middle silo
+var SLOTS = [0.1, 0.22, 0.34, 0.5, 0.66, 0.78, 0.9];
+var CITY_IDX = [0, 1, 2, 4, 5, 6];
+var KILL_PTS = 25;
+var AMMO_PTS = 50;
+var CITY_PTS = 100;
+var RELOAD_TICKS = 240;                         // 4 s at 60 Hz when the silo runs dry mid-wave
+var MISSILE_HALF = 8;                           // incoming missile half-length, px at RS 1
+var AIM_FLOOR = 6;                              // lowest target, px above the silo top
+var BLAST_GROW = 22, BLAST_HOLD = 16, BLAST_FADE = 26;
+var SKY = [[-1,0],[-1,.45],[-.7,.45],[-.7,.8],[-.4,.8],[-.4,.35],[-.15,.35],[-.15,1],[.15,1],[.15,.55],[.4,.55],[.4,.7],[.7,.7],[.7,.4],[1,.4],[1,0]];
+/* missile outline, nose at +1, tail at -1 */
+var MISSILE = (function(){
+var half = [[1,0],[.8,.08],[.6,.115],[.45,.12],[.15,.12],[-.38,.4],[-.38,.12],[-.72,.12],[-1,.3],[-1,.12]];
+var out = half.slice();
+for(var i = half.length - 1; i > 0; i--) out.push([half[i][0], -half[i][1]]);
+return out;
+})();
+
+var ctx = cv.getContext('2d');
+var W = 0, H = 0, DPR = 1, RS = 1;
+var score = 0, level = 1, ammo = START_AMMO, reload = 0;
+var mode = 'play';            // play | over | win
+var phase = 'intro';          // intro | fight | tally | dying
+var phaseT = 0, paused = false, frame = 0;
+var alive = [], rubble = [];
+var incoming = [], abms = [], blasts = [], bits = [];
+var wave = { total: 0, spawned: 0, timer: 0, burst: 0 };
+var banner = null, notice = null, shake = 0;
+var ammoBonus = 0, cityBonus = 0, tallyCities = [];
+var aim = { x: 0, y: 0, on: false, flash: 0 };
+var raf = 0, looping = false;
+var TICK = 1000 / 60, MAX_TICKS = 5, last = 0, acc = 0;
+
+function jagged(n, lo, hi){
+var j = [];
+for(var i = 0; i < n; i++) j.push(rand(lo, hi));
+return j;
+}
+
+function stats(){
+if(cfg.onStats) cfg.onStats({
+score: score, level: level, ammo: ammo, mode: mode,
+cities: CITY_IDX.map(function(k){ return !!alive[k]; })
+});
+}
+
+function groundY(){ return H - Math.round(30 * RS); }
+function slotX(i){ return W * SLOTS[i]; }
+function siloTop(){ return groundY() - 30 * RS; }
+function mult(){ return 1 + Math.floor((level - 1) / 2); }
+function cityNo(i){ return i < SILO ? i + 1 : i; }
+
+function resize(){
+var d = cfg.measure(), oldW = W, oldH = H;
+DPR = Math.min(window.devicePixelRatio || 1, 2);
+W = Math.max(1, Math.round(d.w));
+H = Math.max(1, Math.round(d.h));
+RS = Math.max(0.55, Math.min(1, Math.min(W, H) / 560));
+cv.width = Math.round(W * DPR);
+cv.height = Math.round(H * DPR);
+cv.style.width = W + 'px';
+cv.style.height = H + 'px';
+ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+if(oldW && oldH && (oldW !== W || oldH !== H)) rescale(W / oldW, H / oldH);
+}
+
+function rescale(sx, sy){
+function p(o){ o.x *= sx; o.y *= sy; }
+var ty = groundY() - 4 * RS;
+incoming.forEach(function(m){ p(m); m.pts.forEach(p); m.tx *= sx; m.vx *= sx; m.vy *= sy; m.swerveAt *= sy; m.ty = ty; });
+abms.forEach(function(b){ p(b); b.ox *= sx; b.oy *= sy; b.tx *= sx; b.ty *= sy; b.vx *= sx; b.vy *= sy; });
+blasts.forEach(p);
+bits.forEach(p);
+aim.x *= sx; aim.y *= sy;
+}
+
+function reset(){
+score = 0; level = 1; mode = 'play'; paused = false;
+alive = SLOTS.map(function(){ return true; });
+rubble = SLOTS.map(function(){ return null; });
+incoming = []; abms = []; blasts = []; bits = [];
+notice = null; shake = 0;
+startWave();
+stats();
+}
+
+/* every wave starts with a full silo of 10 */
+function startWave(){
+ammo = START_AMMO;
+reload = 0;
+wave = { total: 8 + level * 2, spawned: 0, timer: 40, burst: 0 };
+phase = 'intro';
+phaseT = 120;
+banner = { lines: ['WAVE ' + level + ' OF ' + MAX_LEVEL, mult() + 'X POINTS'] };
+}
+
+function beginTally(){
+phase = 'tally';
+phaseT = 60;
+ammoBonus = 0;
+cityBonus = 0;
+tallyCities = CITY_IDX.filter(function(k){ return alive[k]; });
+reload = 0;
+banner = { lines: ['WAVE ' + level + ' CLEAR', 'MISSILE BONUS 0', 'CITY BONUS 0'], done: false };
+}
+
+/* unused missiles, then surviving cities, count off one by one into the score */
+function tally(){
+if(--phaseT > 0) return;
+var p;
+if(ammo > 0){
+p = AMMO_PTS * mult();
+ammo--; ammoBonus += p; score += p;
+banner.lines[1] = 'MISSILE BONUS ' + ammoBonus;
+sfxTick();
+stats();
+phaseT = 8;
+} else if(tallyCities.length){
+tallyCities.shift();
+p = CITY_PTS * mult();
+cityBonus += p; score += p;
+banner.lines[2] = 'CITY BONUS ' + cityBonus;
+sfxTick();
+stats();
+phaseT = 16;
+} else if(!banner.done){
+banner.done = true;
+phaseT = 110;
+} else if(level >= MAX_LEVEL){
+finish('win');
+} else {
+level++;
+startWave();
+stats();
+}
+}
+
+function finish(how){
+var b = 0;
+if(ammo > 0){ b = ammo * AMMO_PTS * mult(); score += b; ammo = 0; }
+mode = how;
+banner = null;
+shake = 0;
+stats();
+if(cfg.onEnd) cfg.onEnd(how, score, b);
+}
+
+function pickTarget(not){
+var opts = [];
+for(var i = 0; i < SLOTS.length; i++) if(alive[i] && i !== not) opts.push(i);
+return opts.length ? opts[Math.floor(Math.random() * opts.length)] : -1;
+}
+
+function spawn(){
+if(wave.spawned >= wave.total || --wave.timer > 0) return;
+if(incoming.length >= MAX_INCOMING){ wave.timer = rand(20, 60); return; }
+launch();
+wave.spawned++;
+if(wave.burst > 0){ wave.burst--; wave.timer = rand(4, 18); return; }
+// salvos of 2-3 from wave 1, more often as levels rise
+if(Math.random() < 0.3 + level * 0.04){
+wave.burst = Math.random() < 0.5 ? 1 : 2;
+wave.timer = rand(4, 18);
+return;
+}
+var gap = Math.max(40, 170 - level * 12);
+wave.timer = gap * rand(0.5, 1.2 + level * 0.08);
+}
+
+function launch(){
+var t = pickTarget(-1);
+if(t < 0) return;
+var x0 = rand(W * 0.04, W * 0.96), y0 = -6;
+var tx = slotX(t) + rand(-12, 12) * RS, ty = groundY() - 4 * RS;
+var secs = Math.max(4.4, 13 - (level - 1) * 0.95) / rand(0.88, 1.12 + level * 0.03);
+var ticks = secs * 60;
+incoming.push({
+x: x0, y: y0, pts: [{ x: x0, y: y0 }], tx: tx, ty: ty,
+vx: (tx - x0) / ticks, vy: (ty - y0) / ticks, target: t,
+swerve: level >= 3 && Math.random() < 0.15 + (level - 3) * 0.06,
+swerveAt: rand(0.25, 0.6) * ty
+});
+}
+
+/* mid-flight retarget: same descent rate, new heading */
+function swerve(m){
+m.swerve = false;
+var t = pickTarget(m.target);
+if(t < 0) return;
+m.pts.push({ x: m.x, y: m.y });
+m.target = t;
+m.tx = slotX(t) + rand(-12, 12) * RS;
+m.vx = (m.tx - m.x) / Math.max(1, (m.ty - m.y) / m.vy);
+}
+
+function burst(x, y, n, spread){
+for(var i = 0; i < n; i++){
+var a = Math.random() * TAU, s = rand(0.5, spread);
+bits.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(24, 60) });
+}
+}
+
+function makeBlast(x, y, kills, max, delay, flick, boom){
+return {
+x: x, y: y, t: -Math.round(delay || 0), kills: kills, max: max || (kills ? 38 : 22),
+flick: !!flick, boom: boom || 0, jag: jagged(12, 0.72, 1.05)
+};
+}
+
+function blastR(f){
+var t = f.t, k;
+if(t < 0) return 0;
+if(t < BLAST_GROW) k = t / BLAST_GROW;
+else if(t < BLAST_GROW + BLAST_HOLD) k = 1;
+else k = 1 - (t - BLAST_GROW - BLAST_HOLD) / BLAST_FADE;
+return Math.max(0, k) * f.max * RS;
+}
+
+function makeRubble(){
+var out = [];
+for(var k = 0; k < 3; k++){
+out.push({ dx: (k - 1) * 12, dy: -rand(3, 6), r: rand(5, 9), jag: jagged(8, 0.6, 1.1), a: rand(0, TAU) });
+}
+return out;
+}
+
+function destroy(i){
+if(!alive[i]) return;
+alive[i] = false;
+rubble[i] = makeRubble();
+burst(slotX(i), groundY() - 10 * RS, 28, 2.8);
+if(i === SILO){
+// the stored missiles cook off: one big fireball, a chain of secondaries, screen shake
+var sx = slotX(SILO), gy = groundY();
+blasts.push(makeBlast(sx, gy - 14 * RS, false, 90, 0, true));
+for(var k = 0; k < 6 + ammo; k++){
+blasts.push(makeBlast(sx + rand(-70, 70) * RS, gy - rand(10, 110) * RS, false, rand(18, 36), rand(6, 90), true, Math.random() < 0.5 ? 2 : 1));
+}
+burst(sx, gy - 14 * RS, 90, 4.2);
+shake = 45;
+sfxBoom(4);
+phase = 'dying';
+phaseT = 160;
+abms = [];
+reload = 0;
+notice = null;
+banner = { lines: ['SILO DESTROYED'] };
+} else {
+var cx = slotX(i), cy = groundY() - 12 * RS;
+sfxBoom(3);
+blasts.push(makeBlast(cx, cy, false, 30, 0, true));
+blasts.push(makeBlast(cx + rand(-14, 14) * RS, cy - rand(4, 16) * RS, false, rand(14, 22), rand(10, 24), true, 2));
+var left = CITY_IDX.filter(function(k){ return alive[k]; }).length;
+notice = { text: left ? 'CITY ' + cityNo(i) + ' DESTROYED' : 'ALL CITIES LOST - DEFEND THE SILO', life: 150 };
+}
+stats();
+}
+
+function impact(m){
+burst(m.x, m.y, 14, 2.2);
+blasts.push(makeBlast(m.x, m.y, false));
+sfxBoom(3);
+destroy(m.target);
+}
+
+function kill(j){
+var m = incoming[j];
+incoming.splice(j, 1);
+burst(m.x, m.y, 10, 2.2);
+score += KILL_PTS * mult();
+sfxBoom(1);
+stats();
+}
+
+function fireAt(x, y){
+aim.flash = 14;
+if(mode !== 'play' || paused || phase !== 'fight' || !alive[SILO] || ammo <= 0) return;
+var ox = slotX(SILO), oy = siloTop();
+y = Math.max(8, Math.min(y, oy - AIM_FLOOR * RS));
+var n = Math.max(1, Math.ceil(Math.hypot(x - ox, y - oy) / (8 * RS)));
+abms.push({ ox: ox, oy: oy, x: ox, y: oy, tx: x, ty: y, vx: (x - ox) / n, vy: (y - oy) / n, n: n });
+ammo--;
+if(ammo === 0) reload = RELOAD_TICKS;
+sfxShot();
+stats();
+}
+
+function update(){
+frame++;
+var i, j;
+if(aim.flash > 0) aim.flash--;
+if(shake > 0) shake--;
+if(notice && --notice.life <= 0) notice = null;
+
+if(phase === 'intro'){
+if(--phaseT <= 0){ phase = 'fight'; banner = null; }
+} else if(phase === 'fight'){
+spawn();
+// silo empty mid-wave: resupply to a full 10 while the game is still live
+if(ammo === 0 && reload > 0 && --reload === 0){
+ammo = START_AMMO;
+notice = { text: START_AMMO + ' MISSILES RELOADED', life: 120 };
+stats();
+}
+} else if(phase === 'tally'){
+tally();
+if(mode !== 'play') return;
+} else if(phase === 'dying'){
+if(--phaseT <= 0){ finish('over'); return; }
+}
+
+/* incoming */
+for(i = incoming.length - 1; i >= 0; i--){
+var m = incoming[i];
+m.x += m.vx; m.y += m.vy;
+if(m.swerve && m.y >= m.swerveAt) swerve(m);
+if(m.y >= m.ty){ incoming.splice(i, 1); impact(m); }
+}
+
+/* counter-missiles */
+for(i = abms.length - 1; i >= 0; i--){
+var b = abms[i];
+b.x += b.vx; b.y += b.vy;
+if(--b.n <= 0){
+abms.splice(i, 1);
+blasts.push(makeBlast(b.tx, b.ty, true, 38 - (level - 1) * 1.5));
+sfxBoom(2);
+}
+}
+
+/* fireballs */
+for(i = blasts.length - 1; i >= 0; i--){
+var f = blasts[i];
+f.t++;
+if(f.t === 0 && f.boom){ sfxBoom(f.boom); burst(f.x, f.y, 12, 2.4); }
+if(frame % 3 === 0) f.jag = jagged(12, 0.72, 1.05);
+if(f.t >= BLAST_GROW + BLAST_HOLD + BLAST_FADE){ blasts.splice(i, 1); continue; }
+if(!f.kills) continue;
+var r = blastR(f) + 2 * RS;
+for(j = incoming.length - 1; j >= 0; j--){
+if(Math.hypot(incoming[j].x - f.x, incoming[j].y - f.y) < r) kill(j);
+}
+}
+
+/* debris */
+for(i = bits.length - 1; i >= 0; i--){
+var p = bits[i];
+p.x += p.vx; p.y += p.vy;
+if(--p.life <= 0) bits.splice(i, 1);
+}
+
+if(phase === 'fight' && wave.spawned >= wave.total && !incoming.length && !abms.length &&
+!blasts.some(function(x){ return x.kills; })) beginTally();
+}
+
+/* ---- drawing ---- */
+function rockPath(x, y, r, jag, a){
+ctx.beginPath();
+for(var i = 0; i < jag.length; i++){
+var ang = a + (i / jag.length) * TAU, rr = r * jag[i];
+var px = x + Math.cos(ang) * rr, py = y + Math.sin(ang) * rr;
+if(i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+}
+ctx.closePath();
+}
+
+/* white at the missile, fading back along the path */
+function trail(x0, y0, pts, x1, y1){
+var g = ctx.createLinearGradient(x0, y0, x1, y1);
+g.addColorStop(0, 'rgba(' + palette.trail + ',0.04)');
+g.addColorStop(1, 'rgba(' + palette.trail + ',1)');
+ctx.strokeStyle = g;
+ctx.beginPath();
+ctx.moveTo(x0, y0);
+for(var k = 0; k < pts.length; k++) ctx.lineTo(pts[k].x, pts[k].y);
+ctx.lineTo(x1, y1);
+ctx.stroke();
+ctx.strokeStyle = palette.vec;
+}
+
+/* nose sits on (m.x, m.y) */
+function drawMissile(m){
+var a = Math.atan2(m.vy, m.vx), c = Math.cos(a), s = Math.sin(a), L = MISSILE_HALF * RS;
+var cx = m.x - c * L, cy = m.y - s * L;
+function pt(lx, ly){ return [cx + (lx * c - ly * s) * L, cy + (lx * s + ly * c) * L]; }
+var i, p;
+ctx.beginPath();
+for(i = 0; i < MISSILE.length; i++){
+p = pt(MISSILE[i][0], MISSILE[i][1]);
+if(i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+}
+ctx.closePath();
+ctx.stroke();
+// same flicker as the Asteroids ship's thrust flame
+if(frame % 4 < 2){
+var f1 = pt(-1, 0.12), f2 = pt(-1.6 - Math.random() * 0.6, 0), f3 = pt(-1, -0.12);
+ctx.strokeStyle = palette.hot;
+ctx.beginPath();
+ctx.moveTo(f1[0], f1[1]); ctx.lineTo(f2[0], f2[1]); ctx.lineTo(f3[0], f3[1]);
+ctx.stroke();
+ctx.strokeStyle = palette.vec;
+}
+}
+
+function drawCity(cx, gy){
+var hw = 20 * RS, h = 24 * RS;
+ctx.beginPath();
+for(var i = 0; i < SKY.length; i++){
+var px = cx + SKY[i][0] * hw, py = gy - SKY[i][1] * h;
+if(i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+}
+ctx.stroke();
+}
+
+function drawSilo(cx, gy){
+var top = gy - 30 * RS;
+ctx.beginPath();
+ctx.moveTo(cx - 40 * RS, gy);
+ctx.lineTo(cx - 18 * RS, top);
+ctx.lineTo(cx + 18 * RS, top);
+ctx.lineTo(cx + 40 * RS, gy);
+ctx.stroke();
+// ammo pyramid 4-3-2-1, emptied from the top
+ctx.fillStyle = palette.vec;
+var left = ammo, rows = [4, 3, 2, 1];
+for(var r = 0; r < rows.length && left > 0; r++){
+var n = rows[r], y = gy - (9 + r * 6) * RS;
+for(var k = 0; k < n && left > 0; k++, left--){
+ctx.fillRect(cx + (k - (n - 1) / 2) * 7 * RS - 1, y - 2.5 * RS, 2, 5 * RS);
+}
+}
+}
+
+function drawRubble(cx, gy, list){
+if(!list) return;
+ctx.globalAlpha = 0.6;
+for(var i = 0; i < list.length; i++){
+var R = list[i];
+rockPath(cx + R.dx * RS, gy + R.dy * RS, R.r * RS, R.jag, R.a);
+ctx.stroke();
+}
+ctx.globalAlpha = 1;
+}
+
+function text(s, x, y, size, colour){
+ctx.font = Math.round(size * RS) + 'px "Press Start 2P", monospace';
+ctx.fillStyle = colour;
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText(s, x, y);
+}
+
+function draw(){
+var i, gy = groundY();
+ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+ctx.clearRect(0, 0, W, H);
+if(shake > 0 && !paused){
+var q = shake * 0.25 * RS;
+ctx.setTransform(DPR, 0, 0, DPR, rand(-q, q) * DPR, rand(-q, q) * DPR);
+}
+ctx.lineWidth = 1.6;
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.strokeStyle = palette.vec;
+
+ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+
+for(i = 0; i < SLOTS.length; i++){
+var cx = slotX(i);
+if(!alive[i]) drawRubble(cx, gy, rubble[i]);
+else if(i === SILO) drawSilo(cx, gy);
+else drawCity(cx, gy);
+}
+
+/* incoming: gradient trail to the tail, then missile + flame */
+ctx.lineWidth = 1.2;
+for(i = 0; i < incoming.length; i++){
+var m = incoming[i], ma = Math.atan2(m.vy, m.vx);
+trail(m.pts[0].x, m.pts[0].y, m.pts.slice(1), m.x - Math.cos(ma) * 2 * MISSILE_HALF * RS, m.y - Math.sin(ma) * 2 * MISSILE_HALF * RS);
+drawMissile(m);
+}
+
+/* counter-missiles + pink target marks */
+for(i = 0; i < abms.length; i++){
+var b = abms[i];
+trail(b.ox, b.oy, [], b.x, b.y);
+ctx.fillStyle = palette.vec;
+ctx.fillRect(b.x - 1.5, b.y - 1.5, 3, 3);
+ctx.strokeStyle = palette.hot;
+ctx.beginPath(); ctx.moveTo(b.tx - 6 * RS, b.ty); ctx.lineTo(b.tx + 6 * RS, b.ty); ctx.stroke();
+}
+
+/* fireballs */
+ctx.lineWidth = 1.6;
+for(i = 0; i < blasts.length; i++){
+var f = blasts[i], r = blastR(f);
+if(r < 1) continue;
+rockPath(f.x, f.y, r, f.jag, 0);
+ctx.globalAlpha = 0.16;
+ctx.fillStyle = palette.hot;
+ctx.fill();
+ctx.globalAlpha = 1;
+ctx.strokeStyle = ((f.kills || f.flick) && Math.floor(f.t / 4) % 2) ? palette.vec : palette.hot;
+ctx.stroke();
+}
+ctx.strokeStyle = palette.vec;
+
+/* debris */
+ctx.fillStyle = palette.hot;
+for(i = 0; i < bits.length; i++){
+ctx.globalAlpha = Math.min(1, bits[i].life / 28);
+ctx.fillRect(bits[i].x, bits[i].y, 2, 2);
+}
+ctx.globalAlpha = 1;
+
+/* resupply countdown over the silo */
+if(phase === 'fight' && alive[SILO] && ammo === 0 && reload > 0){
+var sx = slotX(SILO), top = siloTop() - 16 * RS, bw = 56 * RS;
+if(Math.floor(frame / 20) % 2 === 0) text('RELOAD', sx, top - 12 * RS, 8, palette.hot);
+ctx.strokeStyle = palette.hot;
+ctx.strokeRect(sx - bw / 2, top - 3 * RS, bw, 6 * RS);
+ctx.fillStyle = palette.hot;
+ctx.fillRect(sx - bw / 2, top - 3 * RS, bw * (1 - reload / RELOAD_TICKS), 6 * RS);
+ctx.strokeStyle = palette.vec;
+}
+
+if(notice) text(notice.text, W / 2, 22 * RS, 9, palette.hot);
+if(banner && mode === 'play'){
+for(i = 0; i < banner.lines.length; i++){
+text(banner.lines[i], W / 2, H * 0.36 + i * 26 * RS, i === 0 ? 14 : 9, i === 0 ? palette.amber : palette.vec);
+}
+}
+
+/* crosshair: horizontal bar only, pink on click, shorter each level */
+if(aim.on && mode === 'play'){
+ctx.strokeStyle = aim.flash > 0 ? palette.hot : palette.vec;
+ctx.lineWidth = 2;
+var cw = (14 - (level - 1) * 0.9) * RS;
+ctx.beginPath(); ctx.moveTo(aim.x - cw, aim.y); ctx.lineTo(aim.x + cw, aim.y); ctx.stroke();
+}
+ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+
+function step(now){
+var dt = last ? now - last : TICK;
+last = now;
+if(mode === 'play' && !paused){
+acc += Math.min(dt, TICK * MAX_TICKS);
+while(acc >= TICK && mode === 'play' && !paused){ update(); acc -= TICK; }
+} else {
+acc = 0;
+}
+draw();
+if(looping) raf = requestAnimationFrame(step);
+}
+
+/* ---- mouse / touch ---- */
+function pos(e){
+var r = cv.getBoundingClientRect();
+aim.x = e.clientX - r.left;
+aim.y = Math.min(e.clientY - r.top, siloTop() - AIM_FLOOR * RS);
+aim.on = true;
+}
+cv.addEventListener('pointermove', pos);
+cv.addEventListener('pointerleave', function(e){ if(e.pointerType === 'mouse') aim.on = false; });
+cv.addEventListener('pointerdown', function(e){
+if(e.button !== 0) return;
+e.preventDefault();
+pos(e);
+fireAt(aim.x, aim.y);
+});
+cv.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+return {
+resize: resize,
+reset: reset,
+start: function(){ if(looping) return; looping = true; last = 0; acc = 0; raf = requestAnimationFrame(step); },
+stop: function(){ looping = false; cancelAnimationFrame(raf); },
+setPaused: function(v){ paused = !!v && mode === 'play'; return paused; },
+isPaused: function(){ return paused; },
+canPause: function(){ return mode === 'play'; }
+};
+}
+
+/* ============================================================
    BACKDROP — autopilot, full window
    ============================================================ */
 var hudLives = document.getElementById('lives');
@@ -954,82 +1574,167 @@ window.addEventListener('resize', function(){
 bg.resize();
 bg.recentre();
 if(!animate) bg.frame();
-if(cabOpen) pg.resize();
+if(cabOpen && current) GAMES[current].engine.resize();
 });
 
 /* ============================================================
-   CABINET — the playable one
+   CABINET — game select, then Asteroids or Missile Command
    ============================================================ */
+var CITY_SVG = '<svg viewBox="0 0 24 20" aria-hidden="true"><path d="M1 19 V11 H4 V6 H8 V13 H10 V2 H14 V9 H17 V7 H20 V12 H23 V19 Z"/></svg>';
 var cabinet = document.getElementById('cabinet');
+var cabTitle = document.getElementById('cab-title');
 var cabScreen = document.getElementById('cab-screen');
 var cabMsg = document.getElementById('cab-msg');
 var cabPaused = document.getElementById('cab-paused');
 var pauseBtn = document.getElementById('cab-pause');
 var soundBtn = document.getElementById('cab-sound');
 var pLives = document.getElementById('p-lives');
+var pCities = document.getElementById('p-cities');
 var pScore = document.getElementById('p-score');
 var pLevel = document.getElementById('p-level');
 var pHi = document.getElementById('p-hi');
+var pAmmo = document.getElementById('p-ammo');
 var playLink = document.getElementById('play-link');
 var cabOpen = false;
-var hasRun = false;
+var current = null;   // 'ast' | 'mc'
+var view = 'menu';    // menu | game | result
 
 pLives.innerHTML = new Array(START_LIVES + 1).join(SHIP_SVG);
+pCities.innerHTML = new Array(7).join(CITY_SVG);
+var cityIcons = [].slice.call(pCities.querySelectorAll('svg'));
 
-function paintHi(){
-var top = loadScores()[0];
-pHi.textContent = top ? String(top) : '0';
-}
-paintHi();
+function measureScreen(){ return { w: cabScreen.clientWidth, h: cabScreen.clientHeight }; }
 
 var pg = createGame(document.getElementById('play'), {
 autopilot: false,
 sound: true,
-measure: function(){ return { w: cabScreen.clientWidth, h: cabScreen.clientHeight }; },
+measure: measureScreen,
 onStats: function(s){
+if(current !== 'ast') return;
 paintLives(pLives, Math.max(0, s.lives));
 pScore.textContent = String(s.score);
 pLevel.textContent = Math.min(s.level, MAX_LEVEL) + '/' + MAX_LEVEL;
 },
-onEnd: function(how, score){ setPause(false); showResult(how, score); }
+onEnd: function(how, score){ setPause(false); showResult(how, score, 0); }
 });
 
+var mc = createMissileCommand(document.getElementById('play-mc'), {
+measure: measureScreen,
+onStats: function(s){
+if(current !== 'mc') return;
+pScore.textContent = String(s.score);
+pLevel.textContent = Math.min(s.level, MAX_LEVEL) + '/' + MAX_LEVEL;
+pAmmo.textContent = String(s.ammo);
+cityIcons.forEach(function(el, n){ el.classList.toggle('spent', !s.cities[n]); });
+},
+onEnd: function(how, score, bonus){ setPause(false); showResult(how, score, bonus); }
+});
+
+var GAMES = {
+ast: {
+title: 'ASTEROIDS', engine: pg, hs: 'mb.asteroids.hiscores.v1',
+win: '<h3>WELL DONE</h3><p>ALL ' + MAX_LEVEL + ' LEVELS CLEARED</p>',
+lose: '<h3>GAME OVER</h3>',
+credits: 'AFTER ATARI ASTEROIDS &middot; 1979<br>NO ASTEROIDS WERE HARMED'
+},
+mc: {
+title: 'MISSILE COMMAND', engine: mc, hs: 'mb.missilecommand.hiscores.v1',
+win: '<h3>WELL DONE</h3><p>ALL ' + MAX_LEVEL + ' WAVES REPELLED</p>',
+lose: '<h3>THE END</h3><p>SILO DESTROYED</p>',
+credits: 'AFTER ATARI MISSILE COMMAND &middot; 1980<br>NO CITIES WERE HARMED'
+}
+};
+
+function game(){ return current ? GAMES[current] : null; }
+function topScore(id){ return loadScores(GAMES[id].hs)[0] || 0; }
+function paintHi(){ if(current) pHi.textContent = String(topScore(current)); }
+
+function setView(v){
+view = v;
+cabinet.classList.toggle('is-menu', v === 'menu');
+}
+
 function setPause(v){
-var on = pg.setPaused(v);
+var g = game();
+var on = g ? g.engine.setPaused(v) : false;
 cabPaused.hidden = !on;
 pauseBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
 pauseBtn.textContent = on ? 'RESUME' : 'PAUSE';
 if(on) resetKeys();
 }
 
-function showResult(how, score){
-var list = saveScore(score);
+function showMsg(html){
+cabMsg.innerHTML = html;
+cabMsg.hidden = false;
+var first = cabMsg.querySelector('button');
+if(first) first.focus();
+}
+
+function showMenu(){
+var g = game();
+setPause(true);
+resetKeys();
+setView('menu');
+cabTitle.textContent = 'ARCADE';
+var html = '<h3>SELECT GAME</h3><div class="cab-menu">';
+if(g && g.engine.canPause()) html += '<button type="button" class="cab-again" data-act="resume">RESUME ' + g.title + '</button>';
+html += '<button type="button" class="cab-again" data-game="ast">ASTEROIDS</button>';
+html += '<button type="button" class="cab-again" data-game="mc">MISSILE COMMAND</button></div>';
+html += '<p class="note">HI &middot; ASTEROIDS ' + Number(topScore('ast')) + ' &middot; MISSILE COMMAND ' + Number(topScore('mc')) + '</p>';
+showMsg(html);
+}
+
+function selectGame(id){
+var prev = game();
+if(prev && current !== id){ prev.engine.setPaused(true); prev.engine.stop(); }
+current = id;
+cabinet.classList.toggle('is-mc', id === 'mc');
+cabTitle.textContent = GAMES[id].title;
+paintHi();
+startRun();
+}
+
+function resumeGame(){
+var g = game();
+cabTitle.textContent = g.title;
+cabMsg.hidden = true;
+cabMsg.innerHTML = '';
+setView('game');
+g.engine.resize();
+if(g.engine.recentre) g.engine.recentre();
+g.engine.start();
+setPause(false);
+}
+
+function showResult(how, score, bonus){
+var g = game();
+var list = saveScore(g.hs, score);
 var rows = list.map(function(s, i){ return '<li>' + (i + 1) + '. ' + Number(s) + '</li>'; }).join('');
-var html = how === 'win'
-? '<h3>WELL DONE</h3><p>ALL ' + MAX_LEVEL + ' LEVELS CLEARED</p>'
-: '<h3>GAME OVER</h3>';
+var html = how === 'win' ? g.win : g.lose;
+if(bonus > 0) html += '<p>MISSILE BONUS +' + Number(bonus) + '</p>';
 html += '<p>SCORE ' + Number(score) + '</p>';
 html += '<p class="note">HI-SCORES</p><ol>' + rows + '</ol>';
 if(how === 'win'){
-html += '<p class="credits">&mdash; CREDITS &mdash;<br>CODE &amp; DESIGN &middot; MATT BALZAN<br>VECTOR ENGINE &middot; VANILLA JS + CANVAS<br>AFTER ATARI ASTEROIDS &middot; 1979<br>NO ASTEROIDS WERE HARMED</p>';
+html += '<p class="credits">&mdash; CREDITS &mdash;<br>CODE &amp; DESIGN &middot; MATT BALZAN<br>VECTOR ENGINE &middot; VANILLA JS + CANVAS<br>' + g.credits + '</p>';
 }
 html += '<p class="note">' + (hsPersists ? 'SAVED TO THIS BROWSER' : 'STORAGE BLOCKED &middot; THIS SESSION ONLY') + '</p>';
-html += '<button type="button" class="cab-again" id="cab-again">PLAY AGAIN</button>';
-cabMsg.innerHTML = html;
-cabMsg.hidden = false;
+html += '<div class="cab-menu"><button type="button" class="cab-again" data-act="again">PLAY AGAIN</button>';
+html += '<button type="button" class="cab-again" data-act="menu">GAMES</button></div>';
+setView('result');
 paintHi();
-var again = document.getElementById('cab-again');
-if(again) again.focus();
+showMsg(html);
 }
 
 function startRun(){
-hasRun = true;
+var g = game();
+if(!g) return;
 cabMsg.hidden = true;
 cabMsg.innerHTML = '';
-pg.resize();
-pg.reset();
+setView('game');
+g.engine.resize();
+g.engine.reset();
 setPause(false);
-pg.start();
+g.engine.start();
 }
 
 function openCabinet(){
@@ -1039,22 +1744,14 @@ cabinet.hidden = false;
 document.body.classList.add('playing');
 loadSamples();
 bg.stop();
-if(hasRun){
-// resume the suspended run (still paused) or its result screen
-pg.resize();
-pg.recentre();
-pg.start();
-} else {
-startRun();
-}
-document.getElementById('cab-close').focus();
+showMenu();
 }
 
 function closeCabinet(){
 if(!cabOpen) return;
 cabOpen = false;
 setPause(true);
-pg.stop();
+if(current) GAMES[current].engine.stop();
 cabinet.hidden = true;
 document.body.classList.remove('playing');
 resetKeys();
@@ -1068,7 +1765,10 @@ pg.keys.left = pg.keys.right = pg.keys.thrust = pg.keys.fire = 0;
 
 playLink.addEventListener('click', openCabinet);
 document.getElementById('cab-close').addEventListener('click', closeCabinet);
-pauseBtn.addEventListener('click', function(){ setPause(!pg.isPaused()); });
+document.getElementById('cab-games').addEventListener('click', function(){ this.blur(); showMenu(); });
+pauseBtn.addEventListener('click', function(){
+if(view === 'game') setPause(!game().engine.isPaused());
+});
 document.getElementById('cab-reset').addEventListener('click', function(){
 // drop focus so SPACE (fire) can't re-trigger a reset mid-game
 this.blur();
@@ -1086,7 +1786,13 @@ if(document.hidden && cabOpen) setPause(true);
 });
 cabinet.addEventListener('mousedown', function(e){ if(e.target === cabinet) closeCabinet(); });
 cabMsg.addEventListener('click', function(e){
-if(e.target.id === 'cab-again') startRun();
+var b = e.target.closest('button');
+if(!b) return;
+var id = b.getAttribute('data-game'), act = b.getAttribute('data-act');
+if(id && GAMES[id]) selectGame(id);
+else if(act === 'resume') resumeGame();
+else if(act === 'again') startRun();
+else if(act === 'menu') showMenu();
 });
 cabPaused.addEventListener('click', function(){ setPause(false); });
 
@@ -1094,14 +1800,18 @@ var KEYMAP = {
 ArrowLeft: 'left', a: 'left', A: 'left',
 ArrowRight: 'right', d: 'right', D: 'right',
 ArrowUp: 'thrust', w: 'thrust', W: 'thrust',
-' ': 'fire', Spacebar: 'fire'
-};
-
-document.addEventListener('keydown', function(e){
-if(!cabOpen) return;
-if(e.key === 'Escape'){ closeCabinet(); return; }
-if(e.key === 'Enter' && !cabMsg.hidden){ e.preventDefault(); startRun(); return; }
-if(e.key === 'p' || e.key === 'P'){ e.preventDefault(); setPause(!pg.isPaused()); return; }
+' 'view !== 'game'){
+// menu/result buttons handle Enter themselves; elsewhere Enter means play again
+if(e.key === 'Enter' && view === 'result' && !cabMsg.contains(document.activeElement)){ e.preventDefault(); startRun(); }
+return;
+}
+if(e.key === 'p' || e.key === 'P'){ e.preventDefault(); setPause(!game().engine.isPaused()); return; }
+if(current !== 'ast' || pg.isPaused()) return;
+var k = KEYMAP[e.key];
+if(k){ e.preventDefault(); pg.keys[k] = 1; }
+});
+document.addEventListener('keyup', function(e){
+if(!cabOpen || current !== 'ast'= 'p' || e.key === 'P'){ e.preventDefault(); setPause(!pg.isPaused()); return; }
 if(pg.isPaused()) return;
 var k = KEYMAP[e.key];
 if(k){ e.preventDefault(); pg.keys[k] = 1; }
